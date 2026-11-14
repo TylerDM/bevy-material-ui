@@ -41,3 +41,6 @@ desktop.ini
 # Where Claude Code puts a worktree by default.
 /.claude/worktrees/
 /.claude/settings.local.json
+
+# The overnight report an agent keeps for the user.
+/.claude/manager-report.md
