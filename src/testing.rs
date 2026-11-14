@@ -333,3 +333,23 @@ fn propagate_visibility(
         }
     }
 }
+/// Drags with the mouse from `from` to `to`, in logical pixels: pressed,
+/// moved there in a few steps, and released, a frame apart.
+pub fn drag(app: &mut App, from: Vec2, to: Vec2) {
+    use bevy::picking::pointer::PointerButton;
+    const STEPS: u8 = 5;
+    pointer(app, from, PointerAction::Move { delta: Vec2::ZERO });
+    app.update();
+    pointer(app, from, PointerAction::Press(PointerButton::Primary));
+    app.update();
+    let mut at = from;
+    for step in 1..=STEPS {
+        let next = from.lerp(to, f32::from(step) / f32::from(STEPS));
+        pointer(app, next, PointerAction::Move { delta: next - at });
+        at = next;
+        app.update();
+    }
+    pointer(app, to, PointerAction::Release(PointerButton::Primary));
+    app.update();
+    app.update();
+}
