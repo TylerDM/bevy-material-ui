@@ -45,6 +45,10 @@ pub(crate) fn quiet_text(
 /// A slot whose icons are drawn in a quiet colour, faded with their control.
 pub(crate) fn quiet_slot(color: ColorRole) -> impl Bundle {
     (
+        Node {
+            flex_shrink: 0.0,
+            ..default()
+        },
         Quiet(color),
         ContentColor(Paint::new(color)),
         Pickable::IGNORE,

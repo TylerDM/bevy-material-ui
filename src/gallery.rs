@@ -402,7 +402,7 @@ fn theme_section(page: &mut ChildSpawnerCommands) {
                 swatches
                     .spawn((
                         Node {
-                            width: Val::Px(112.0),
+                            width: Val::Px(168.0),
                             height: Val::Px(56.0),
                             padding: UiRect::all(Space::Small.val()),
                             align_items: AlignItems::End,
@@ -945,6 +945,7 @@ fn feedback_section(page: &mut ChildSpawnerCommands) {
                         Node {
                             width: Val::Px(ICON),
                             height: Val::Px(ICON),
+                            margin: UiRect::right(Space::Large.val()),
                             ..default()
                         },
                         ContentColor(Paint::new(ColorRole::OnSurfaceVariant)),

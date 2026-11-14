@@ -154,7 +154,7 @@ impl MaterialCheckbox {
                 Node {
                     width: Val::Px(BOX),
                     height: Val::Px(BOX),
-                    border: UiRect::all(Val::Px(2.0)),
+                    border: UiRect::all(Val::Px(BORDER)),
                     border_radius: BorderRadius::all(Val::Px(2.0)),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
@@ -164,18 +164,7 @@ impl MaterialCheckbox {
                 Stroke::new(ColorRole::OnSurfaceVariant),
                 ContentColor(Paint::new(ColorRole::OnPrimary)),
                 Pickable::IGNORE,
-                children![
-                    (
-                        CheckboxMark(Glyph::Check),
-                        icon(Glyph::Check, BOX),
-                        Visibility::Hidden
-                    ),
-                    (
-                        CheckboxMark(Glyph::Dash),
-                        icon(Glyph::Dash, BOX),
-                        Visibility::Hidden
-                    ),
-                ],
+                children![mark(Glyph::Check), mark(Glyph::Dash)],
             )],
         )
     }
@@ -186,6 +175,28 @@ impl MaterialCheckbox {
         labelled(self.bundle(), words.into())
     }
 }
+
+/// A checkbox's mark, hidden until drawn: laid over the box's inside, so a
+/// tick and a dash take the same place, and sized to it, inside its border.
+fn mark(glyph: Glyph) -> impl Bundle {
+    (
+        CheckboxMark(glyph),
+        Node {
+            position_type: PositionType::Absolute,
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            ..default()
+        },
+        Visibility::Hidden,
+        Pickable::IGNORE,
+        children![icon(glyph, BOX - 2.0 * BORDER)],
+    )
+}
+
+/// The width of a checkbox's box's border, in logical pixels.
+const BORDER: f32 = 2.0;
 
 /// A control with `words` after it, in a [`LabelRow`].
 pub(crate) fn labelled(control: impl Bundle, words: String) -> impl Bundle {

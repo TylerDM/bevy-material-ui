@@ -616,3 +616,33 @@ fn tab_moves_the_keyboards_focus_through_the_gallery_with_a_ring_on_it() {
         "the focused control shows its ring: {ring:?}"
     );
 }
+
+#[test]
+fn every_part_of_the_gallery_hangs_from_a_ui_node() {
+    let (mut app, root) = gallery();
+    // Open every overlay too, so what they spawn is held to it.
+    for name in ["open dialog", "open sheet", "show undo snackbar"] {
+        let opener = sample(&app, root, name);
+        click(&mut app, opener);
+    }
+    let tipped = sample(&app, root, "rich tooltip");
+    hover(&mut app, tipped);
+    wait(&mut app, TOOLTIP_DELAY + 0.3);
+    let mut orphans = Vec::new();
+    let mut nodes = app
+        .world_mut()
+        .query_filtered::<(Entity, &ChildOf), With<Node>>();
+    for (entity, parent) in nodes.iter(app.world()) {
+        if app.world().get::<Node>(parent.parent()).is_none() {
+            orphans.push((entity, parent.parent()));
+        }
+    }
+    let described: Vec<String> = orphans
+        .iter()
+        .map(|(entity, parent)| format!("{entity} under {parent}: {}", words(&app, *entity)))
+        .collect();
+    assert!(
+        described.is_empty(),
+        "UI nodes under non-UI parents: {described:#?}"
+    );
+}
