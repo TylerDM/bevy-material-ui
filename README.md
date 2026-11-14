@@ -106,8 +106,9 @@ cargo run --example playtest
 Every component in every state on one screen, all of it live: click, type,
 drag, tab through it with the keyboard, open the menus and dialogs, queue
 snackbars, and switch light and dark (`D`) or the seed colour (`S`) to see
-the whole interface repaint. Bevy builds slowly the first time (a few
-minutes); after that it starts in seconds.
+the whole interface repaint. It fills the primary monitor, borderless, at
+its native resolution; close it with Alt+F4 (Cmd+Q on macOS). Bevy builds
+slowly the first time (a few minutes); after that it starts in seconds.
 
 To check its look without sitting at it, `--screenshots` scrolls the whole
 gallery, saves each screenful - and an open dialog, sheet and snackbar - as

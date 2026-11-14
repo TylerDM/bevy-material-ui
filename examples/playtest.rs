@@ -4,6 +4,8 @@
 //! cargo run --example playtest
 //! ```
 //!
+//! It fills the primary monitor, borderless, at its native resolution; Alt+F4
+//! (Cmd+Q on macOS) closes it.
 //! Click, type, drag and tab through it; `D` turns the theme light or dark
 //! and `S` moves to the next seed colour. `tests/playtest.rs` drives the same
 //! gallery headlessly.
@@ -17,6 +19,7 @@ use std::path::PathBuf;
 use bevy::prelude::*;
 use bevy::render::view::screenshot::{Screenshot, ScreenshotCaptured, save_to_disk};
 use bevy::ui_widgets::ScrollArea;
+use bevy::window::WindowMode;
 use bevy_material_ui::gallery::{GalleryPlugin, spawn_gallery};
 use bevy_material_ui::prelude::*;
 
@@ -34,7 +37,8 @@ fn main() {
         DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "bevy_material_ui play test".into(),
-                resolution: (1440, 960).into(),
+                // Borderless full screen takes the monitor's own resolution.
+                mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
                 ..default()
             }),
             ..default()
