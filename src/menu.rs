@@ -347,16 +347,16 @@ fn on_menu_event(
                 event.propagate(false);
                 commands
                     .entity(popup)
-                    .insert((Visibility::Visible, MenuFocusState::Opening(nav)));
+                    .try_insert((Visibility::Visible, MenuFocusState::Opening(nav)));
             }
         }
         MenuAction::Toggle => {
             if let Some(popup) = popup {
                 event.propagate(false);
                 if matches!(popups.get(popup), Ok(Visibility::Visible)) {
-                    commands.entity(popup).insert(Visibility::Hidden);
+                    commands.entity(popup).try_insert(Visibility::Hidden);
                 } else {
-                    commands.entity(popup).insert((
+                    commands.entity(popup).try_insert((
                         Visibility::Visible,
                         MenuFocusState::Opening(NavAction::First),
                     ));
@@ -366,7 +366,7 @@ fn on_menu_event(
         MenuAction::CloseAll => {
             if let Some(popup) = popup {
                 event.propagate(false);
-                commands.entity(popup).insert(Visibility::Hidden);
+                commands.entity(popup).try_insert(Visibility::Hidden);
             }
         }
         MenuAction::FocusRoot => {

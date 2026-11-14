@@ -49,6 +49,6 @@ pub(crate) fn draw_focus_rings(
         };
         commands
             .entity(ring)
-            .insert(Outline::new(Val::Px(RING), Val::Px(GAP), color));
+            .try_insert(Outline::new(Val::Px(RING), Val::Px(GAP), color));
     }
 }

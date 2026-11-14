@@ -11,8 +11,8 @@ use bevy::ui::{BorderGradient, Gradient, ScrollPosition, UiTransform, Val2};
 use bevy::ui_widgets::Button;
 use bevy_material_ui::prelude::*;
 use bevy_material_ui::testing::{
-    click, click_at, find, find_all, focus, headless_app, hover, press, rect, settle, spawn, wait,
-    words,
+    click, click_at, find, find_all, focus, headless_app, hover, press, rect, scroll_into_view,
+    settle, spawn, wait, within, words,
 };
 
 /// Every event of type `E` seen, in order.
@@ -719,6 +719,50 @@ fn rows(count: usize) -> impl Bundle {
             ));
         }
     })
+}
+
+#[test]
+fn the_harness_scrolls_a_part_into_view_through_a_scroll_area_inside_another() {
+    let mut app = app();
+    let outer = spawn(
+        &mut app,
+        scroll_area(Val::Px(300.0), |page| {
+            for _ in 0..20 {
+                page.spawn(Node {
+                    height: Val::Px(40.0),
+                    flex_shrink: 0.0,
+                    ..default()
+                });
+            }
+            page.spawn(rows(30));
+        }),
+    );
+    let last = find_all::<Text>(&app, outer)
+        .into_iter()
+        .find(|part| {
+            app.world()
+                .get::<Text>(*part)
+                .is_some_and(|text| text.0 == "Row 29")
+        })
+        .expect("the inner area's last row");
+    let inner = find_all::<bevy::ui_widgets::ScrollArea>(&app, outer)
+        .into_iter()
+        .find(|area| *area != outer)
+        .expect("the inner area");
+    assert!(
+        !within(rect(&app, last), rect(&app, outer)),
+        "it starts out of view"
+    );
+
+    scroll_into_view(&mut app, last);
+    assert!(
+        within(rect(&app, last), rect(&app, inner)),
+        "the inner area scrolled to it"
+    );
+    assert!(
+        within(rect(&app, inner), rect(&app, outer)),
+        "and the outer area to the inner"
+    );
 }
 
 #[test]

@@ -617,6 +617,85 @@ fn tab_moves_the_keyboards_focus_through_the_gallery_with_a_ring_on_it() {
     );
 }
 
+/// Set when a control of the gallery is used: the gallery is then replaced.
+#[derive(Resource, Default)]
+struct Replace(bool);
+
+#[test]
+fn a_game_can_replace_the_whole_screen_in_update_right_after_any_control_is_used() {
+    // A game moving to another screen despawns this one in `Update`, the
+    // frame a control is used, in no order with the crate's own systems and
+    // observers - which must never then command a part that is gone: Bevy
+    // panics on a command to a despawned entity.
+    let (mut app, _) = gallery();
+    app.init_resource::<Replace>()
+        .add_observer(|_: On<Activate>, mut replace: ResMut<Replace>| replace.0 = true)
+        .add_observer(|_: On<ValueChange<bool>>, mut replace: ResMut<Replace>| {
+            replace.0 = true;
+        })
+        .add_observer(|_: On<ValueChange<usize>>, mut replace: ResMut<Replace>| {
+            replace.0 = true;
+        })
+        .add_observer(|_: On<ValueChange<Entity>>, mut replace: ResMut<Replace>| {
+            replace.0 = true;
+        })
+        .add_systems(
+            Update,
+            |mut replace: ResMut<Replace>,
+             galleries: Query<Entity, With<Gallery>>,
+             mut commands: Commands| {
+                if std::mem::take(&mut replace.0) {
+                    for gallery in &galleries {
+                        commands.entity(gallery).despawn();
+                    }
+                    spawn_gallery(&mut commands);
+                }
+            },
+        );
+    let current = |app: &mut App| anywhere::<Gallery>(app).expect("a gallery stands");
+    for name in [
+        "filled button",
+        "checkbox",
+        "switch",
+        "view",
+        "filter chip",
+        "assist chip",
+        "players",
+        "primary tabs",
+        "navigation rail",
+    ] {
+        let root = current(&mut app);
+        let control = sample(&app, root, name);
+        let target = find::<ListRow>(&app, control)
+            .or_else(|| find::<MaterialTab>(&app, control))
+            .or_else(|| find::<NavigationDestination>(&app, control))
+            .or_else(|| find::<Segment>(&app, control))
+            .unwrap_or(control);
+        click(&mut app, target);
+        wait(&mut app, 0.1);
+    }
+    let root = current(&mut app);
+    let quality = sample(&app, root, "quality");
+    focus(&mut app, quality);
+    press(&mut app, KeyCode::End, Key::End);
+    wait(&mut app, 0.1);
+    let root = current(&mut app);
+    let open = sample(&app, root, "open dialog");
+    click(&mut app, open);
+    let surface = anywhere::<DialogSurface>(&mut app).expect("the dialog");
+    let delete = saying(&app, surface, "Delete");
+    click(&mut app, delete);
+    wait(&mut app, 0.1);
+    assert_eq!(
+        app.world_mut()
+            .query_filtered::<(), With<Gallery>>()
+            .iter(app.world())
+            .count(),
+        1,
+        "one gallery stands"
+    );
+}
+
 #[test]
 fn every_part_of_the_gallery_hangs_from_a_ui_node() {
     let (mut app, root) = gallery();

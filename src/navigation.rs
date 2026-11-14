@@ -426,7 +426,9 @@ fn draw_destinations(
                     look.set_if_neq(indicator_look(active));
                 }
                 if labels.contains(inner) {
-                    commands.entity(inner).insert(Ink::new(label_role(active)));
+                    commands
+                        .entity(inner)
+                        .try_insert(Ink::new(label_role(active)));
                 }
             }
         }

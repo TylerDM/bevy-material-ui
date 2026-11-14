@@ -219,12 +219,26 @@ pub fn hover(app: &mut App, entity: Entity) {
     app.update();
 }
 
-/// Scrolls `entity` into view in the scroll area it is in, as a player
+/// Scrolls `entity` into view in every scroll area it is in, as a player
 /// would before using it, and lays the page out again.
 pub fn scroll_into_view(app: &mut App, entity: Entity) {
-    app.world_mut()
-        .trigger(bevy::ui_widgets::ScrollIntoView { entity });
-    settle(app);
+    // Bevy scrolls only the nearest scroll area; an area inside another is
+    // then itself scrolled into view in that one, outwards.
+    let areas: Vec<Entity> = std::iter::successors(app.world().get::<ChildOf>(entity), |parent| {
+        app.world().get::<ChildOf>(parent.parent())
+    })
+    .map(ChildOf::parent)
+    .filter(|ancestor| {
+        app.world()
+            .get::<bevy::ui_widgets::ScrollArea>(*ancestor)
+            .is_some()
+    })
+    .collect();
+    for part in std::iter::once(entity).chain(areas) {
+        app.world_mut()
+            .trigger(bevy::ui_widgets::ScrollIntoView { entity: part });
+        settle(app);
+    }
 }
 
 /// Clicks `entity` with the mouse - scrolled into view, moved over,

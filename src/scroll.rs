@@ -105,7 +105,7 @@ fn draw_thumbs(
         if fill.0.opacity != opacity {
             commands
                 .entity(thumb)
-                .insert(Fill(Paint::faded(ColorRole::OnSurfaceVariant, opacity)));
+                .try_insert(Fill(Paint::faded(ColorRole::OnSurfaceVariant, opacity)));
         }
     }
 }

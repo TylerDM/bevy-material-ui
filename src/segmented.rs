@@ -258,9 +258,9 @@ pub(crate) fn activate_segment(
     if self_updating {
         for ((entity, _, _), now) in parts.iter().zip(after) {
             if now {
-                commands.entity(*entity).insert(Checked);
+                commands.entity(*entity).try_insert(Checked);
             } else {
-                commands.entity(*entity).remove::<Checked>();
+                commands.entity(*entity).try_remove::<Checked>();
             }
         }
     }
@@ -283,7 +283,7 @@ pub(crate) fn draw_segments(
         if *look != wanted {
             *look = wanted;
         }
-        commands.entity(entity).insert(Stroke(if disabled {
+        commands.entity(entity).try_insert(Stroke(if disabled {
             Paint::faded(ColorRole::OnSurface, state::DISABLED_CONTAINER)
         } else {
             Paint::new(ColorRole::Outline)

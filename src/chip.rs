@@ -221,15 +221,15 @@ fn chip_behaviour_added(
     };
     let mut commands = world.commands();
     let mut chip = commands.entity(context.entity);
-    chip.remove::<ChipBehaviour>();
+    chip.try_remove::<ChipBehaviour>();
     match behaviour {
         ChipBehaviour::Button => {
-            chip.insert(Button);
+            chip.try_insert(Button);
         }
         ChipBehaviour::Filter { selected } => {
-            chip.insert((Checkbox, observe(checkbox_self_update)));
+            chip.try_insert((Checkbox, observe(checkbox_self_update)));
             if selected {
-                chip.insert(Checked);
+                chip.try_insert(Checked);
             }
         }
     }

@@ -243,12 +243,12 @@ pub(crate) fn on_starting(
         return;
     };
     let mut control = commands.entity(add.entity);
-    control.remove::<Starting>();
+    control.try_remove::<Starting>();
     if start.checked {
-        control.insert(Checked);
+        control.try_insert(Checked);
     }
     if start.self_updating {
-        control.insert(SelfUpdating);
+        control.try_insert(SelfUpdating);
     }
 }
 
@@ -262,9 +262,9 @@ pub(crate) fn update_self(
         return;
     }
     if change.value {
-        commands.entity(change.source).insert(Checked);
+        commands.entity(change.source).try_insert(Checked);
     } else {
-        commands.entity(change.source).remove::<Checked>();
+        commands.entity(change.source).try_remove::<Checked>();
     }
 }
 
@@ -400,7 +400,7 @@ pub(crate) fn draw_checkboxes(
         }
         for part in children.iter_descendants(entity) {
             if boxes.contains(part) {
-                commands.entity(part).insert((
+                commands.entity(part).try_insert((
                     Fill(paints.fill),
                     Stroke(paints.outline),
                     ContentColor(paints.mark),
@@ -410,7 +410,7 @@ pub(crate) fn draw_checkboxes(
                     Glyph::Dash => style.indeterminate,
                     _ => checked && !style.indeterminate,
                 };
-                commands.entity(part).insert(if shown {
+                commands.entity(part).try_insert(if shown {
                     Visibility::Inherited
                 } else {
                     Visibility::Hidden

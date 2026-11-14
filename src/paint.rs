@@ -230,9 +230,9 @@ pub fn label(words: impl Into<String>, role: TypeRole) -> impl Bundle {
 /// use it.
 pub fn set_enabled(control: &mut EntityCommands, enabled: bool) {
     if enabled {
-        control.remove::<InteractionDisabled>();
+        control.try_remove::<InteractionDisabled>();
     } else {
-        control.insert(InteractionDisabled);
+        control.try_insert(InteractionDisabled);
     }
 }
 
@@ -276,7 +276,7 @@ pub(crate) fn on_typeset(
         *font = theme.font(typeset.0);
         commands
             .entity(insert.entity)
-            .insert(MaterialTheme::line_height(typeset.0));
+            .try_insert(MaterialTheme::line_height(typeset.0));
     }
 }
 

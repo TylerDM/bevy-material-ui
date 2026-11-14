@@ -80,7 +80,7 @@ pub(crate) fn fade_quiet(
         } else {
             Paint::new(*role)
         };
-        commands.entity(entity).insert(ContentColor(paint));
+        commands.entity(entity).try_insert(ContentColor(paint));
     }
 }
 
@@ -396,9 +396,11 @@ fn draw_active_rows(
                 } else {
                     Color::NONE
                 };
-                commands
-                    .entity(entity)
-                    .insert(Outline::new(Val::Px(3.0), Val::Px(-3.0), color));
+                commands.entity(entity).try_insert(Outline::new(
+                    Val::Px(3.0),
+                    Val::Px(-3.0),
+                    color,
+                ));
             } else if let Ok(inner) = children.get(entity) {
                 stack.extend(inner.iter());
             }

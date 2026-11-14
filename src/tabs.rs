@@ -232,9 +232,9 @@ fn select_initial_tabs(
             .filter(|child| tabs.contains(*child))
             .nth(*index);
         let mut row = commands.entity(row);
-        row.remove::<InitialTab>();
+        row.try_remove::<InitialTab>();
         if let Some(chosen) = chosen {
-            row.insert(SelectedTab(Some(chosen)));
+            row.try_insert(SelectedTab(Some(chosen)));
         }
     }
 }

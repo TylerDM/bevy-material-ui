@@ -677,7 +677,7 @@ fn draw_fields(
         let outlined = field.variant == TextFieldVariant::Outlined;
 
         let (indicator, width) = now.indicator(field.variant);
-        commands.entity(parts.frame).insert(Stroke(indicator));
+        commands.entity(parts.frame).try_insert(Stroke(indicator));
         if let Ok(mut node) = nodes.get_mut(parts.frame) {
             let border = if outlined {
                 UiRect::all(Val::Px(width))
@@ -689,7 +689,7 @@ fn draw_fields(
             }
         }
         if !outlined {
-            commands.entity(parts.frame).insert(if now.disabled {
+            commands.entity(parts.frame).try_insert(if now.disabled {
                 Fill(Paint::faded(ColorRole::OnSurface, 0.04))
             } else {
                 Fill::new(ColorRole::SurfaceContainerHighest)
@@ -700,7 +700,9 @@ fn draw_fields(
         } else {
             Paint::new(ColorRole::OnSurfaceVariant)
         };
-        commands.entity(parts.frame).insert(ContentColor(content));
+        commands
+            .entity(parts.frame)
+            .try_insert(ContentColor(content));
 
         if let Some(label) = parts.label {
             let floated = now.floated();
@@ -710,9 +712,9 @@ fn draw_fields(
                 TypeRole::BodyLarge
             };
             if first || was.map(FieldState::floated) != Some(floated) {
-                commands.entity(label).insert(Typeset(role));
+                commands.entity(label).try_insert(Typeset(role));
             }
-            commands.entity(label).insert(Ink(now.label()));
+            commands.entity(label).try_insert(Ink(now.label()));
             if let Ok(mut node) = nodes.get_mut(label) {
                 let top = match (floated, outlined) {
                     (false, _) => 16.0,
@@ -726,7 +728,7 @@ fn draw_fields(
             } else {
                 Paint::faded(field.surface, 0.0)
             };
-            commands.entity(label).insert(Fill(behind));
+            commands.entity(label).try_insert(Fill(behind));
         }
         if let Some(placeholder) = parts.placeholder
             && let Ok(mut visibility) = visibilities.get_mut(placeholder)
@@ -755,8 +757,10 @@ fn draw_fields(
                 words.0 = wanted;
             }
         }
-        commands.entity(parts.supporting).insert(Ink(now.below()));
-        commands.entity(parts.counter).insert(Ink(now.below()));
+        commands
+            .entity(parts.supporting)
+            .try_insert(Ink(now.below()));
+        commands.entity(parts.counter).try_insert(Ink(now.below()));
         if let Ok(mut node) = nodes.get_mut(parts.below) {
             let display = if below_words.is_some() || count.is_some() {
                 Display::Flex
@@ -785,15 +789,15 @@ fn draw_fields(
         let mut input = commands.entity(text.input);
         if now.disabled {
             input
-                .insert((
+                .try_insert((
                     InteractionDisabled,
                     Ink(Paint::faded(ColorRole::OnSurface, state::DISABLED_CONTENT)),
                 ))
-                .remove::<TabIndex>();
+                .try_remove::<TabIndex>();
         } else {
             input
-                .remove::<InteractionDisabled>()
-                .insert((TabIndex(0), Ink::new(ColorRole::OnSurface)));
+                .try_remove::<InteractionDisabled>()
+                .try_insert((TabIndex(0), Ink::new(ColorRole::OnSurface)));
         }
         if let Ok(mut cursor) = cursors.get_mut(text.input) {
             let caret = if now.error {

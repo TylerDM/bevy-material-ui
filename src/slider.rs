@@ -411,9 +411,9 @@ fn on_notches_if(add: On<Add<NotchesIf>>, found: Query<&NotchesIf>, mut commands
     };
     let notches = notches.clone();
     let mut slider = commands.entity(add.entity);
-    slider.remove::<NotchesIf>();
+    slider.try_remove::<NotchesIf>();
     if let Some(notches) = notches {
-        slider.insert(notches);
+        slider.try_insert(notches);
     }
 }
 
@@ -502,7 +502,7 @@ pub(crate) fn follow_value(
     };
     commands
         .entity(change.source)
-        .insert(SliderValue(on_a_step(change.value, *range, step.0)));
+        .try_insert(SliderValue(on_a_step(change.value, *range, step.0)));
     if let Some(mut notches) = notches {
         let notch = Some(notch_at(change.value, *range));
         if notches.chosen != notch {
@@ -610,14 +610,14 @@ pub(crate) fn draw_sliders(
             if let Ok((mut node, thumb, halo_part, fill, track, background)) = parts.get_mut(part) {
                 if thumb || halo_part {
                     node.left = percent;
-                    commands.entity(part).insert(if hidden {
+                    commands.entity(part).try_insert(if hidden {
                         Visibility::Hidden
                     } else {
                         Visibility::Inherited
                     });
                 }
                 if thumb {
-                    commands.entity(part).insert(Fill(handle));
+                    commands.entity(part).try_insert(Fill(handle));
                 } else if halo_part {
                     if let Some(mut background) = background {
                         background.0 = if disabled {
@@ -628,9 +628,9 @@ pub(crate) fn draw_sliders(
                     }
                 } else if fill {
                     node.width = percent;
-                    commands.entity(part).insert(Fill(active));
+                    commands.entity(part).try_insert(Fill(active));
                 } else if track {
-                    commands.entity(part).insert(Fill(inactive));
+                    commands.entity(part).try_insert(Fill(inactive));
                 }
             }
             if let Ok(SliderStop(share)) = stops.get(part) {
@@ -640,12 +640,12 @@ pub(crate) fn draw_sliders(
                     (true, false) => Paint::new(ColorRole::OnPrimary),
                     (false, false) => Paint::new(ColorRole::OnSecondaryContainer),
                 };
-                commands.entity(part).insert(Fill(role));
+                commands.entity(part).try_insert(Fill(role));
             }
             if let Ok((NotchLabel(notch), words)) = labels.get(part) {
                 let paint = label_role(Some(*notch) == chosen, disabled);
                 for text in words.iter() {
-                    commands.entity(text).insert(Ink(paint));
+                    commands.entity(text).try_insert(Ink(paint));
                 }
             }
         }

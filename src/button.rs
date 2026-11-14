@@ -190,9 +190,9 @@ pub(crate) fn on_starts_enabled(
         return;
     };
     let mut control = commands.entity(add.entity);
-    control.remove::<StartsEnabled>();
+    control.try_remove::<StartsEnabled>();
     if !enabled {
-        control.insert(InteractionDisabled);
+        control.try_insert(InteractionDisabled);
     }
 }
 

@@ -271,9 +271,9 @@ pub(crate) fn update_group(
             continue;
         }
         if part == change.value {
-            commands.entity(part).insert(Checked);
+            commands.entity(part).try_insert(Checked);
         } else {
-            commands.entity(part).remove::<Checked>();
+            commands.entity(part).try_remove::<Checked>();
         }
     }
 }
@@ -285,7 +285,7 @@ pub(crate) fn update_radio(
     mut commands: Commands,
 ) {
     if change.value && radios.contains(change.source) {
-        commands.entity(change.source).insert(Checked);
+        commands.entity(change.source).try_insert(Checked);
     }
 }
 
@@ -325,9 +325,9 @@ pub(crate) fn draw_radios(
         }
         for part in children.iter_descendants(entity) {
             if rings.contains(part) {
-                commands.entity(part).insert(Stroke(ring));
+                commands.entity(part).try_insert(Stroke(ring));
             } else if dots.contains(part) {
-                commands.entity(part).insert((
+                commands.entity(part).try_insert((
                     Fill(ring),
                     if checked {
                         Visibility::Inherited

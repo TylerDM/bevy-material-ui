@@ -309,7 +309,7 @@ pub(crate) fn draw_switches(
         let paints = switch_paints(now);
         commands
             .entity(entity)
-            .insert((Fill(paints.track), Stroke(paints.border)));
+            .try_insert((Fill(paints.track), Stroke(paints.border)));
         let icons = style.icons;
         for part in children.iter_descendants(entity) {
             if let Ok((mut node, mut background)) = halos.get_mut(part) {
@@ -326,9 +326,9 @@ pub(crate) fn draw_switches(
                 node.height = side;
                 commands
                     .entity(part)
-                    .insert((Fill(paints.handle), ContentColor(paints.icon)));
+                    .try_insert((Fill(paints.handle), ContentColor(paints.icon)));
             } else if marks.contains(part) {
-                commands.entity(part).insert(if icons && on {
+                commands.entity(part).try_insert(if icons && on {
                     Visibility::Inherited
                 } else {
                     Visibility::Hidden
