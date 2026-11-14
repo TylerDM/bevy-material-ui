@@ -60,7 +60,10 @@ A version the user names wins. The version must be new
 
 ## 3. Write the notes
 
-A section at the top of `CHANGELOG.md`, under the intro:
+A section at the top of `CHANGELOG.md`, under the intro. Changes land with
+their lines under `## [Unreleased]`: rename that heading to the version's
+and check its lines against the diffs, rather than writing a second
+section. The section:
 
 ```markdown
 ## [<version>]

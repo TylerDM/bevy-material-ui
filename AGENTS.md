@@ -20,6 +20,7 @@ src/testing.rs  the headless harness: a real Bevy UI, a pointer and a keyboard, 
 src/<family>.rs one file per component family: paper, button, checkbox, text_field, menu, dialog...
 tests/          each family driven headlessly; tests/playtest.rs drives the whole play test
 examples/playtest.rs  every component, live, in a window
+examples/guild/       the Guild Clerk: a game of forms using every component; tests/guild.rs plays it
 docs/decisions.md     what was chosen, why, and whose choice it was
 ```
 
@@ -140,6 +141,11 @@ needs a component drawn off-spec.
   game's state, and never assumes where it is in the tree.
 - **A module registers its own systems and observers** from
   `pub(crate) fn plugin(app: &mut App)`, called by `MaterialUiPlugin`.
+- **A part may be despawned in any frame.** A game replaces its screens in
+  its own systems, in no order with the crate's, and Bevy panics on a
+  command to an entity that is gone. So a system or observer commanding a
+  part it didn't spawn in that same command uses `try_insert` and
+  `try_remove`, never `insert` and `remove`.
 - **Keyboard and focus work for every control**: each focusable control
   has a `TabIndex` and a `FocusRing`; Tab, Enter, Space, the arrows and
   Escape do what Material and Bevy's widget say.
@@ -147,7 +153,8 @@ needs a component drawn off-spec.
   harness's sixtieth-of-a-second frames make timed parts - snackbars,
   tooltips, animations - certain in tests.
 - **Every component is in the play test**, in every state it has, and the
-  headless play test drives it.
+  headless play test drives it. The Guild Clerk (`examples/guild/`) shows
+  them in a game; a component a game would use belongs in it too.
 
 ## Testing
 

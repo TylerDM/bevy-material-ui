@@ -35,3 +35,8 @@ change. Values and mechanisms are written in the code, never restated here.
 - **The play test lives in the library**, as `bevy_material_ui::gallery`, so
   a game can show it in its own theme; `examples/playtest.rs` is a window
   around it. (Claude, 2026-11-13.)
+- **The Guild Clerk is an example, not part of the library**: it is a game,
+  holding a game's state, which no game depending on the crate wants
+  compiled in. Its game is `examples/guild/game.rs`, which `tests/guild.rs`
+  takes in with `#[path]` to play it headlessly. (The user chose the game,
+  2026-11-14; its shape, Claude.)

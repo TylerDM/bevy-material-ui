@@ -51,6 +51,8 @@ Against, in this order:
    - a component is a bundle the game spawns: it never spawns itself, holds
      a game's state or assumes where it is in the tree;
    - systems and observers registered from the module's `plugin(app)`;
+   - a command on a part the system didn't just spawn is `try_insert` or
+     `try_remove`, since a game may despawn it the same frame;
    - every focusable control has a `TabIndex` and a `FocusRing`, and the
      keys Material and Bevy's widget name work;
    - time from Bevy's `Time`, never the clock.

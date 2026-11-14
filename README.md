@@ -123,6 +123,25 @@ it builds the whole screen and drives it as a player would - every control
 clicked, typed into or keyed, every overlay opened and closed - and checks
 what each does.
 
+## The Guild Clerk
+
+```bash
+cargo run --example guild
+```
+
+The components in a game, where they make sense: you are the clerk of an
+adventurers' guild. Each client says what they want; write the contract
+(text fields, segmented buttons, a select, radio buttons, a notched slider,
+a switch, checkboxes), choose its party from a roster you search and filter
+(a search bar, filter chips, a list, input chips), and file it through a
+dialog - or return a request the guild shouldn't take. A snackbar offers
+Undo; the ledger's tabs show the day and the quests out, their progress
+bars filling as parties travel; the settings turn the guild dark or
+recolour it from a seed. It fills the primary monitor like the play test,
+and `tests/guild.rs` plays a day of it headlessly. The game's own code is
+in `examples/guild/game.rs`: how a game keeps its state and reads the
+controls' events.
+
 ## Getting it running
 
 Prerequisites: [Rust](https://rustup.rs/) - `rust-toolchain.toml` installs
@@ -159,6 +178,7 @@ bevy-material-ui/
 ├── docs/decisions.md   what was chosen, why, and whose choice it was
 ├── assets/fonts/       Roboto, and its licence
 ├── examples/playtest.rs  every component, live
+├── examples/guild/     the Guild Clerk: a game of forms using every component
 ├── src/
 │   ├── lib.rs          MaterialUiPlugin, the prelude
 │   ├── theme/          the scheme, seeded schemes, type, tokens

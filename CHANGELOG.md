@@ -8,6 +8,21 @@ The versions are [Semantic Versioning](https://semver.org)'s, read the Cargo
 way while the crate is 0.x: a change a game must make is a minor, anything
 else a patch.
 
+## [Unreleased]
+
+- **Fixed**: a game that despawns its screen in its own systems - to move
+  to another screen, say - no longer risks a panic from the crate's systems
+  commanding a part that is gone (a skeleton's pulse did it every frame).
+- **The Guild Clerk**: `cargo run --example guild`, a short game of forms
+  that uses every component where a game would, and shows how a game keeps
+  its state and reads the controls' events.
+- **The play test** fills the primary monitor, borderless, at its native
+  resolution.
+
+### Moving to it
+
+Nothing.
+
 ## [0.1.0]
 
 The first release, on Bevy 0.20.1.

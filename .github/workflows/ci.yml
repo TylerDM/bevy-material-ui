@@ -81,4 +81,4 @@ jobs:
 
       # The play test as a game builds it: the window, the renderer, the lot.
       - name: Build the play test
-        run: cargo build --example playtest
+        run: cargo build --examples
