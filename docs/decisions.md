@@ -35,6 +35,10 @@ change. Values and mechanisms are written in the code, never restated here.
 - **The play test lives in the library**, as `bevy_material_ui::gallery`, so
   a game can show it in its own theme; `examples/playtest.rs` is a window
   around it. (Claude, 2026-11-13.)
+- **The examples run borderless full screen at the monitor's native
+  resolution** (the user, 2026-11-14), **except `--screenshots`**, which
+  saves a fixed 1600 x 1260 window at a scale of one, so README's pictures
+  come out the same on every machine. (The exception, Claude, 2026-11-14.)
 - **The Guild Clerk is an example, not part of the library**: it is a game,
   holding a game's state, which no game depending on the crate wants
   compiled in. Its game is `examples/guild/game.rs`, which `tests/guild.rs`

@@ -20,6 +20,43 @@ editor and says itself it is not for a game's UI; this is.
 > getting it running and using it from a game. The two do not repeat each
 > other.
 
+## What it looks like
+
+The [Guild Clerk](#the-guild-clerk), a short game of forms built from the
+components, in its own seeded theme, light and dark:
+
+![The Guild Clerk's desk: a client's request, the contract form and the party roster](docs/screenshots/guild-desk.png)
+
+![The same desk in the dark theme](docs/screenshots/guild-desk-dark.png)
+
+The [play test](#the-play-test), every component in every state, in
+Material's baseline theme:
+
+![Papers, cards, buttons, FABs, segmented buttons, checkboxes, radio buttons and switches](docs/screenshots/playtest-buttons.png)
+
+![Sliders, text fields, a search bar and chips, in the dark theme](docs/screenshots/playtest-fields-dark.png)
+
+![A dialog on its scrim over navigation, progress, badges and avatars](docs/screenshots/playtest-dialog.png)
+
+These are the examples' own `--screenshots` runs, at a fixed 1600 x 1260
+window; to take them again:
+
+```bash
+cargo run --example guild -- --screenshots target/screenshots/guild
+```
+
+```bash
+cargo run --example playtest -- --screenshots target/screenshots/light
+```
+
+```bash
+cargo run --example playtest -- --screenshots target/screenshots/dark --dark
+```
+
+and copy `desk.png` and `desk-dark.png`, the light run's `page-01.png` and
+`overlay-dialog.png`, and the dark run's `page-02.png` over the files in
+`docs/screenshots/`.
+
 ## What is in the box
 
 | Area | What it gives a game |
@@ -176,9 +213,11 @@ bevy-material-ui/
 ├── AGENTS.md           how the crate is put together and the rules that hold
 ├── CHANGELOG.md        what each release changed, and what a game must do
 ├── docs/decisions.md   what was chosen, why, and whose choice it was
+├── docs/screenshots/   the pictures at the top of this file
 ├── assets/fonts/       Roboto, and its licence
 ├── examples/playtest.rs  every component, live
 ├── examples/guild/     the Guild Clerk: a game of forms using every component
+├── examples/shared/    the examples' window, full screen or sized for screenshots
 ├── src/
 │   ├── lib.rs          MaterialUiPlugin, the prelude
 │   ├── theme/          the scheme, seeded schemes, type, tokens

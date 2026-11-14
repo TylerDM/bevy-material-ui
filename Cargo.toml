@@ -13,7 +13,7 @@ categories = ["game-development", "gui"]
 # Released as tagged GitHub releases and taken as a git dependency, never from
 # crates.io - see "Releasing" in README.md.
 publish = false
-exclude = [".github", ".githooks", ".claude", ".vscode"]
+exclude = [".github", ".githooks", ".claude", ".vscode", "docs/screenshots"]
 
 [features]
 default = ["roboto"]

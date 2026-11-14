@@ -14,33 +14,28 @@
 //! scrolls through the whole gallery, saves each screenful as a PNG in the
 //! folder, and exits: how the gallery's look is checked without sitting at it.
 
+#[path = "shared/window.rs"]
+mod window;
+
 use std::path::PathBuf;
 
 use bevy::prelude::*;
 use bevy::render::view::screenshot::{Screenshot, ScreenshotCaptured, save_to_disk};
 use bevy::ui_widgets::ScrollArea;
-use bevy::window::WindowMode;
 use bevy_material_ui::gallery::{GalleryPlugin, spawn_gallery};
 use bevy_material_ui::prelude::*;
 
 fn main() {
-    let arguments: Vec<String> = std::env::args().collect();
-    let screenshots = arguments
-        .iter()
-        .position(|argument| argument == "--screenshots")
-        .and_then(|at| arguments.get(at + 1))
-        .map(PathBuf::from);
-    let dark = arguments.iter().any(|argument| argument == "--dark");
+    let screenshots = window::screenshots_folder();
+    let dark = std::env::args().any(|argument| argument == "--dark");
 
     let mut app = App::new();
     app.add_plugins((
         DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: "bevy_material_ui play test".into(),
-                // Borderless full screen takes the monitor's own resolution.
-                mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
-                ..default()
-            }),
+            primary_window: Some(window::window(
+                "bevy_material_ui play test",
+                screenshots.is_some(),
+            )),
             ..default()
         }),
         MaterialUiPlugin,

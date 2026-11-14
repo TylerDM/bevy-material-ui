@@ -18,30 +18,21 @@
 //! and exits: how the game's look is checked without sitting at it.
 
 mod game;
+#[path = "../shared/window.rs"]
+mod window;
 
 use std::path::PathBuf;
 
 use bevy::prelude::*;
 use bevy::render::view::screenshot::{Screenshot, ScreenshotCaptured, save_to_disk};
-use bevy::window::WindowMode;
 use bevy_material_ui::prelude::*;
 
 fn main() {
-    let arguments: Vec<String> = std::env::args().collect();
-    let screenshots = arguments
-        .iter()
-        .position(|argument| argument == "--screenshots")
-        .and_then(|at| arguments.get(at + 1))
-        .map(PathBuf::from);
+    let screenshots = window::screenshots_folder();
     let mut app = App::new();
     app.add_plugins((
         DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: "The Guild Clerk".into(),
-                // Borderless full screen takes the monitor's own resolution.
-                mode: WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
-                ..default()
-            }),
+            primary_window: Some(window::window("The Guild Clerk", screenshots.is_some())),
             ..default()
         }),
         MaterialUiPlugin,
