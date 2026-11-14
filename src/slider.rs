@@ -112,7 +112,8 @@ pub struct MaterialSlider {
     pub value: f32,
     /// What it runs between.
     pub range: RangeInclusive<f32>,
-    /// What it moves by, by key and when it is dragged; 0 for no steps.
+    /// What it moves by, by key and when it is dragged; 0 for no steps, when
+    /// a key moves it a hundredth of its range ([`KEY_SHARE`]).
     pub step: f32,
     /// Whether it shows a stop at each step.
     pub stops: bool,
@@ -212,7 +213,7 @@ impl MaterialSlider {
                 },
                 SliderValue(value),
                 range,
-                SliderStep(self.step),
+                SliderStep(key_step(self.step, &self.range)),
                 MaterialSliderStyle {
                     stops: self.stops,
                     drawn: None,
@@ -441,6 +442,20 @@ fn stop_shares(slider: &MaterialSlider) -> Vec<f32> {
         .collect()
 }
 
+/// How much of its range a key moves a slider with no steps of its own.
+pub const KEY_SHARE: f32 = 0.01;
+
+/// What a key moves a slider by: its `step`, or for one with none (a
+/// continuous slider) [`KEY_SHARE`] of its range, so the arrow keys always
+/// move it.
+pub fn key_step(step: f32, range: &RangeInclusive<f32>) -> f32 {
+    if step > 0.0 {
+        step
+    } else {
+        (range.end() - range.start()).abs() * KEY_SHARE
+    }
+}
+
 /// `value` at the nearest step of `step` from the start of `range`.
 pub fn on_a_step(value: f32, range: SliderRange, step: f32) -> f32 {
     if step <= 0.0 {
@@ -650,6 +665,13 @@ pub(crate) fn plugin(app: &mut App) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_key_moves_a_slider_by_its_step_or_a_hundredth_of_its_range_without_one() {
+        assert_eq!(key_step(5.0, &(0.0..=100.0)), 5.0);
+        assert_eq!(key_step(0.0, &(0.0..=100.0)), 1.0);
+        assert!((key_step(0.0, &(2.0..=4.0)) - 0.02).abs() < 1e-6);
+    }
 
     #[test]
     fn a_value_goes_to_the_nearest_step_from_the_start_and_stays_in_range() {

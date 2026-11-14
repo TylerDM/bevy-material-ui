@@ -107,9 +107,9 @@ pub use crate::radio::{
     radio, radio_group, radio_paints,
 };
 pub use crate::slider::{
-    HANDLE, MaterialSlider, MaterialSliderStyle, NotchLabel, Notches, SLIDER_HEIGHT, SLIDER_TRACK,
-    SliderFill, SliderHalo, SliderStop, SliderTrack, notch_at, notched_slider, on_a_step,
-    set_notch, slider,
+    HANDLE, KEY_SHARE, MaterialSlider, MaterialSliderStyle, NotchLabel, Notches, SLIDER_HEIGHT,
+    SLIDER_TRACK, SliderFill, SliderHalo, SliderStop, SliderTrack, key_step, notch_at,
+    notched_slider, on_a_step, set_notch, slider,
 };
 pub use crate::switch::{
     MaterialSwitch, SWITCH_TRACK, SwitchHalo, SwitchHandle, SwitchPaints, SwitchState, SwitchStyle,
