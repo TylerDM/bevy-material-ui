@@ -39,6 +39,7 @@
 
 mod button;
 mod focus;
+pub mod gallery;
 mod icon;
 mod paint;
 mod paper;
@@ -69,7 +70,7 @@ pub mod prelude {
 
     pub use crate::theme::{
         Brightness, ColorRole, Corner, Elevation, MaterialFonts, MaterialTheme, Scheme, Space,
-        TypeRole,
+        TypeRole, hex,
     };
     pub use crate::*;
 }

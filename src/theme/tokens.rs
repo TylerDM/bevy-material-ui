@@ -223,7 +223,10 @@ pub fn layered(under: Color, over: Color, opacity: f32) -> Color {
     if under_srgb.alpha == 0.0 {
         return over_srgb.with_alpha(opacity).into();
     }
-    under_srgb.mix(&over_srgb, opacity).with_alpha(under_srgb.alpha).into()
+    under_srgb
+        .mix(&over_srgb, opacity)
+        .with_alpha(under_srgb.alpha)
+        .into()
 }
 
 #[cfg(test)]
@@ -256,7 +259,10 @@ mod tests {
     fn emphasized_easing_starts_at_zero_ends_at_one_and_leads() {
         assert!(emphasized(0.0).abs() < 1e-3);
         assert!((emphasized(1.0) - 1.0).abs() < 1e-3);
-        assert!(emphasized(0.5) > 0.5, "Material's easing is ahead at half time");
+        assert!(
+            emphasized(0.5) > 0.5,
+            "Material's easing is ahead at half time"
+        );
         assert!(emphasized(0.3) < emphasized(0.6));
     }
 
@@ -266,7 +272,10 @@ mod tests {
         assert!((tinted.red - 0.5).abs() < 0.01, "{tinted:?}");
         assert_eq!(tinted.alpha, 1.0);
         let wash = layered(Color::NONE, Color::BLACK, state::HOVERED).to_srgba();
-        assert!((wash.alpha - state::HOVERED).abs() < 1e-4, "on nothing, a wash");
+        assert!(
+            (wash.alpha - state::HOVERED).abs() < 1e-4,
+            "on nothing, a wash"
+        );
     }
 
     #[test]

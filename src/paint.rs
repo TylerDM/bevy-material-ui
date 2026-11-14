@@ -353,9 +353,9 @@ pub(crate) fn paint_controls(
         Mut<BackgroundColor>,
         Option<Mut<BoxShadow>>,
     )| {
-        background.set_if_neq(BackgroundColor(look.container_color(
-            &theme, hovered.0, pressed, disabled,
-        )));
+        background.set_if_neq(BackgroundColor(
+            look.container_color(&theme, hovered.0, pressed, disabled),
+        ));
         if let (Some(mut drawn), Some(wanted)) = (shadow, look.shadow(&theme, hovered.0, disabled))
             && *drawn != wanted
         {
@@ -403,7 +403,11 @@ pub(crate) fn paint_content(
     changed: Query<Entity, ProviderChanged>,
     mut enabled: RemovedComponents<InteractionDisabled>,
     all: Query<Entity, With<Content>>,
-    providers: Query<(Option<&Look>, Option<&ContentColor>, Has<InteractionDisabled>)>,
+    providers: Query<(
+        Option<&Look>,
+        Option<&ContentColor>,
+        Has<InteractionDisabled>,
+    )>,
     parents: Query<&ChildOf>,
     mut leaves: Query<LeafColors, With<Content>>,
 ) {
@@ -437,7 +441,11 @@ pub(crate) fn paint_content(
 fn content_color(
     leaf: Entity,
     theme: &MaterialTheme,
-    providers: &Query<(Option<&Look>, Option<&ContentColor>, Has<InteractionDisabled>)>,
+    providers: &Query<(
+        Option<&Look>,
+        Option<&ContentColor>,
+        Has<InteractionDisabled>,
+    )>,
     parents: &Query<&ChildOf>,
 ) -> Option<Color> {
     let mut at = leaf;
@@ -482,7 +490,10 @@ mod tests {
     fn a_control_with_no_container_shows_its_state_as_a_wash_of_its_content() {
         let theme = MaterialTheme::light();
         let look = Look::bare(ColorRole::Primary);
-        assert_eq!(look.container_color(&theme, false, false, false), Color::NONE);
+        assert_eq!(
+            look.container_color(&theme, false, false, false),
+            Color::NONE
+        );
         let hovered = look.container_color(&theme, true, false, false);
         assert!((hovered.alpha() - state::HOVERED).abs() < 1e-4);
         assert_eq!(look.container_color(&theme, true, false, true), Color::NONE);
@@ -494,9 +505,21 @@ mod tests {
         let look = Look::filled(ColorRole::SurfaceContainerLow, ColorRole::Primary)
             .raised(Elevation::Level1);
         let shadow = |level: Elevation| level.shadow(theme.color(ColorRole::Shadow));
-        assert_eq!(look.shadow(&theme, false, false), Some(shadow(Elevation::Level1)));
-        assert_eq!(look.shadow(&theme, true, false), Some(shadow(Elevation::Level2)));
-        assert_eq!(look.shadow(&theme, true, true), Some(shadow(Elevation::Level0)));
-        assert_eq!(Look::bare(ColorRole::Primary).shadow(&theme, true, false), None);
+        assert_eq!(
+            look.shadow(&theme, false, false),
+            Some(shadow(Elevation::Level1))
+        );
+        assert_eq!(
+            look.shadow(&theme, true, false),
+            Some(shadow(Elevation::Level2))
+        );
+        assert_eq!(
+            look.shadow(&theme, true, true),
+            Some(shadow(Elevation::Level0))
+        );
+        assert_eq!(
+            Look::bare(ColorRole::Primary).shadow(&theme, true, false),
+            None
+        );
     }
 }

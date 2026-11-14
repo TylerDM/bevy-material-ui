@@ -192,11 +192,8 @@ fn pointer(app: &mut App, at: Vec2, action: PointerAction) {
         ),
         position: at,
     };
-    app.world_mut().write_message(PointerInput::new(
-        PointerId::Mouse,
-        location,
-        action,
-    ));
+    app.world_mut()
+        .write_message(PointerInput::new(PointerId::Mouse, location, action));
 }
 
 /// The centre of a node, in logical pixels.
@@ -209,16 +206,28 @@ pub fn centre(app: &mut App, entity: Entity) -> Vec2 {
     rect(app, entity).center() * scale
 }
 
-/// Moves the mouse over `entity`'s centre and runs a frame.
+/// Moves the mouse over `entity`'s centre, scrolled into view, and runs a
+/// frame.
 pub fn hover(app: &mut App, entity: Entity) {
+    scroll_into_view(app, entity);
     let at = centre(app, entity);
     pointer(app, at, PointerAction::Move { delta: Vec2::ZERO });
     app.update();
 }
 
-/// Clicks `entity` with the mouse - moved over it, pressed and released -
-/// and runs frames until the click has done what it does.
+/// Scrolls `entity` into view in the scroll area it is in, as a player
+/// would before using it, and lays the page out again.
+pub fn scroll_into_view(app: &mut App, entity: Entity) {
+    app.world_mut()
+        .trigger(bevy::ui_widgets::ScrollIntoView { entity });
+    settle(app);
+}
+
+/// Clicks `entity` with the mouse - scrolled into view, moved over,
+/// pressed and released - and runs frames until the click has done what it
+/// does.
 pub fn click(app: &mut App, entity: Entity) {
+    scroll_into_view(app, entity);
     let at = centre(app, entity);
     click_at(app, at);
 }

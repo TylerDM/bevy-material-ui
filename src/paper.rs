@@ -26,6 +26,10 @@ pub struct Paper {
     pub gap: Val,
     /// Whether what is laid on it goes down (a column) or across (a row).
     pub direction: FlexDirection,
+    /// Its width; Val::Auto fits what is on it.
+    pub width: Val,
+    /// Its height; Val::Auto fits what is on it.
+    pub height: Val,
 }
 
 impl Default for Paper {
@@ -39,6 +43,8 @@ impl Default for Paper {
             padding: UiRect::all(Space::Large.val()),
             gap: Space::Small.val(),
             direction: FlexDirection::Column,
+            width: Val::Auto,
+            height: Val::Auto,
         }
     }
 }
@@ -98,8 +104,20 @@ impl Paper {
         self
     }
 
-    /// Its components: add children, and a `Node` of your own after it to
-    /// size it.
+    /// `width` wide.
+    pub fn width(mut self, width: Val) -> Self {
+        self.width = width;
+        self
+    }
+
+    /// `height` tall.
+    pub fn height(mut self, height: Val) -> Self {
+        self.height = height;
+        self
+    }
+
+    /// Its components: spawn it, then its children. It carries its own
+    /// `Node`; size it with [`Paper::width`] and [`Paper::height`].
     pub fn bundle(self) -> impl Bundle {
         let border = if self.outline.is_some() {
             UiRect::all(Val::Px(1.0))
@@ -109,6 +127,8 @@ impl Paper {
         (
             Node {
                 flex_direction: self.direction,
+                width: self.width,
+                height: self.height,
                 padding: self.padding,
                 row_gap: self.gap,
                 column_gap: self.gap,

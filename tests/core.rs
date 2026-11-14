@@ -23,7 +23,10 @@ fn app() -> App {
 }
 
 fn background(app: &App, entity: Entity) -> Color {
-    app.world().get::<BackgroundColor>(entity).expect("a background").0
+    app.world()
+        .get::<BackgroundColor>(entity)
+        .expect("a background")
+        .0
 }
 
 fn theme(app: &App) -> MaterialTheme {
@@ -44,7 +47,10 @@ fn a_filled_button_is_drawn_in_primary_with_its_label_on_primary_in_label_large(
         theme.color(ColorRole::OnPrimary)
     );
     assert_eq!(
-        app.world().get::<TextFont>(label).expect("a font").font_size,
+        app.world()
+            .get::<TextFont>(label)
+            .expect("a font")
+            .font_size,
         FontSize::Px(TypeRole::LabelLarge.size())
     );
 }
@@ -56,7 +62,11 @@ fn a_hovered_button_shows_its_state_layer_and_a_click_activates_it() {
     let rest = background(&app, button);
 
     hover(&mut app, button);
-    assert_ne!(background(&app, button), rest, "hovered shows a state layer");
+    assert_ne!(
+        background(&app, button),
+        rest,
+        "hovered shows a state layer"
+    );
 
     click(&mut app, button);
     assert_eq!(app.world().resource::<Activations>().0, [button]);
@@ -91,7 +101,11 @@ fn a_disabled_button_is_faded_and_a_click_does_nothing_until_it_is_enabled() {
     let hovered = ButtonVariant::Filled
         .look()
         .container_color(&theme(&app), true, false, false);
-    assert_eq!(background(&app, button), hovered, "enabled, under the pointer");
+    assert_eq!(
+        background(&app, button),
+        hovered,
+        "enabled, under the pointer"
+    );
     click(&mut app, button);
     assert_eq!(app.world().resource::<Activations>().0, [button]);
 }
@@ -111,7 +125,10 @@ fn turning_the_theme_dark_repaints_every_part() {
 
     let dark = MaterialTheme::dark();
     assert_eq!(background(&app, button), dark.color(ColorRole::Primary));
-    assert_eq!(background(&app, sheet), dark.color(ColorRole::SurfaceContainerLow));
+    assert_eq!(
+        background(&app, sheet),
+        dark.color(ColorRole::SurfaceContainerLow)
+    );
     assert_eq!(
         app.world().get::<TextColor>(words).expect("a colour").0,
         dark.color(ColorRole::OnSurface)
@@ -129,10 +146,25 @@ fn a_raised_paper_casts_a_shadow_and_an_outlined_one_none() {
     let raised = spawn(&mut app, paper().elevation(Elevation::Level3).bundle());
     let outlined = spawn(&mut app, card(CardKind::Outlined).bundle());
 
-    assert!(!app.world().get::<BoxShadow>(raised).expect("a shadow").0.is_empty());
-    assert!(app.world().get::<BoxShadow>(outlined).expect("a shadow").0.is_empty());
+    assert!(
+        !app.world()
+            .get::<BoxShadow>(raised)
+            .expect("a shadow")
+            .0
+            .is_empty()
+    );
+    assert!(
+        app.world()
+            .get::<BoxShadow>(outlined)
+            .expect("a shadow")
+            .0
+            .is_empty()
+    );
     assert_eq!(
-        app.world().get::<BorderColor>(outlined).expect("a border").top,
+        app.world()
+            .get::<BorderColor>(outlined)
+            .expect("a border")
+            .top,
         theme(&app).color(ColorRole::OutlineVariant)
     );
 }

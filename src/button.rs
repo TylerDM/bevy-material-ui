@@ -47,9 +47,10 @@ impl ButtonVariant {
     pub fn look(self) -> Look {
         match self {
             ButtonVariant::Filled => Look::filled(ColorRole::Primary, ColorRole::OnPrimary),
-            ButtonVariant::Tonal => {
-                Look::filled(ColorRole::SecondaryContainer, ColorRole::OnSecondaryContainer)
-            }
+            ButtonVariant::Tonal => Look::filled(
+                ColorRole::SecondaryContainer,
+                ColorRole::OnSecondaryContainer,
+            ),
             ButtonVariant::Elevated => {
                 Look::filled(ColorRole::SurfaceContainerLow, ColorRole::Primary)
                     .raised(Elevation::Level1)
@@ -226,9 +227,10 @@ impl IconButtonVariant {
                 Look::bare(ColorRole::OnSurfaceVariant)
             }
             IconButtonVariant::Filled => Look::filled(ColorRole::Primary, ColorRole::OnPrimary),
-            IconButtonVariant::Tonal => {
-                Look::filled(ColorRole::SecondaryContainer, ColorRole::OnSecondaryContainer)
-            }
+            IconButtonVariant::Tonal => Look::filled(
+                ColorRole::SecondaryContainer,
+                ColorRole::OnSecondaryContainer,
+            ),
         }
     }
 }
@@ -337,12 +339,18 @@ mod tests {
 
     #[test]
     fn a_buttons_variant_is_its_colour() {
-        assert_eq!(ButtonVariant::Filled.look().container, Some(ColorRole::Primary));
+        assert_eq!(
+            ButtonVariant::Filled.look().container,
+            Some(ColorRole::Primary)
+        );
         assert_eq!(
             ButtonVariant::Tonal.look().container,
             Some(ColorRole::SecondaryContainer)
         );
-        assert_eq!(ButtonVariant::Elevated.look().elevation, Some(Elevation::Level1));
+        assert_eq!(
+            ButtonVariant::Elevated.look().elevation,
+            Some(Elevation::Level1)
+        );
         assert_eq!(ButtonVariant::Outlined.look().container, None);
         assert_eq!(ButtonVariant::Text.look().content, ColorRole::Primary);
     }

@@ -181,11 +181,20 @@ mod tests {
         let seeded = MaterialTheme::from_seed(hex(0x1B8A3C), Brightness::Light);
         let dark = seeded.at(Brightness::Dark);
         assert_eq!(dark.brightness(), Brightness::Dark);
-        assert_eq!(dark.scheme, Scheme::from_seed(hex(0x1B8A3C), Brightness::Dark));
+        assert_eq!(
+            dark.scheme,
+            Scheme::from_seed(hex(0x1B8A3C), Brightness::Dark)
+        );
         assert_eq!(dark.seed, seeded.seed);
 
-        assert_eq!(MaterialTheme::light().at(Brightness::Dark), MaterialTheme::dark());
-        assert_eq!(MaterialTheme::dark().at(Brightness::Light), MaterialTheme::light());
+        assert_eq!(
+            MaterialTheme::light().at(Brightness::Dark),
+            MaterialTheme::dark()
+        );
+        assert_eq!(
+            MaterialTheme::dark().at(Brightness::Light),
+            MaterialTheme::light()
+        );
     }
 
     #[test]

@@ -296,7 +296,10 @@ mod tests {
         assert_eq!(scheme.color(ColorRole::OnPrimary), hex(0xFFFFFF));
         let touched = scheme.clone().with(ColorRole::Primary, hex(0x123456));
         assert_eq!(touched.color(ColorRole::Primary), hex(0x123456));
-        assert_eq!(touched.color(ColorRole::Secondary), scheme.color(ColorRole::Secondary));
+        assert_eq!(
+            touched.color(ColorRole::Secondary),
+            scheme.color(ColorRole::Secondary)
+        );
     }
 
     #[test]
@@ -304,7 +307,10 @@ mod tests {
         assert_eq!(Scheme::baseline_light().brightness(), Brightness::Light);
         assert_eq!(Scheme::baseline_dark().brightness(), Brightness::Dark);
         assert!(
-            contrast(Scheme::baseline_dark().color(ColorRole::Surface), Color::BLACK) < 2.0,
+            contrast(
+                Scheme::baseline_dark().color(ColorRole::Surface),
+                Color::BLACK
+            ) < 2.0,
             "a dark surface is dark"
         );
     }

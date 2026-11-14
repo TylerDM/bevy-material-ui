@@ -232,6 +232,11 @@ mod tests {
         let primary = Scheme::from_seed(seed, Brightness::Light).color(ColorRole::Primary);
         let hue = |color: Color| Lcha::from(color).hue;
         let turn = (hue(primary) - hue(seed)).abs();
-        assert!(turn.min(360.0 - turn) < 3.0, "{} against {}", hue(primary), hue(seed));
+        assert!(
+            turn.min(360.0 - turn) < 3.0,
+            "{} against {}",
+            hue(primary),
+            hue(seed)
+        );
     }
 }

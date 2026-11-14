@@ -129,11 +129,12 @@ mod tests {
 
     #[test]
     fn each_kind_of_text_shrinks_from_large_to_small_and_display_is_largest() {
-        assert!(TypeRole::ALL.iter().all(|role| role.size() <= TypeRole::DisplayLarge.size()));
-        for pair in TypeRole::ALL
-            .chunks(3)
-            .flat_map(|group| group.windows(2))
-        {
+        assert!(
+            TypeRole::ALL
+                .iter()
+                .all(|role| role.size() <= TypeRole::DisplayLarge.size())
+        );
+        for pair in TypeRole::ALL.chunks(3).flat_map(|group| group.windows(2)) {
             assert!(
                 pair[0].size() >= pair[1].size(),
                 "{:?} is smaller than {:?}",
