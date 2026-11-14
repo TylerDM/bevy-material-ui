@@ -1,0 +1,9 @@
+# Read by cargo only when building in this repository; a game that depends on
+# the crate links with its own settings.
+
+# rust-lld ships with rustup's toolchain and links Bevy-sized binaries - every
+# test file and the play test - several times faster than MSVC's link.exe.
+# Linux has used lld by default since Rust 1.90; macOS's own linker is
+# already fast.
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"

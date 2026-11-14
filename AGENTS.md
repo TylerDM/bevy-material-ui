@@ -20,7 +20,80 @@ src/testing.rs  the headless harness: a real Bevy UI, a pointer and a keyboard, 
 src/<family>.rs one file per component family: paper, button, checkbox, text_field, menu, dialog...
 tests/          each family driven headlessly; tests/playtest.rs drives the whole play test
 examples/playtest.rs  every component, live, in a window
+docs/decisions.md     what was chosen, why, and whose choice it was
 ```
+
+## Done means
+
+Before calling a change finished:
+
+- [ ] `docs/decisions.md` read for what it touches, and no decision made
+      silently: asked, then recorded there ("Decisions")
+- [ ] its tests in the same commit, each named as the rule it holds
+      ("Testing")
+- [ ] every component it adds or changes in the play test, in every state,
+      and anything it draws looked at in `--screenshots`, light and dark
+- [ ] `cargo test`, `cargo clippy --all-targets --all-features -- -D
+      warnings`, `cargo fmt --all` and the docs clean
+- [ ] the diff reread for anything that duplicates code already here and
+      anything added but not used ("Writing code")
+- [ ] what a game sees changed: a line for the next `CHANGELOG.md` section,
+      and under "Moving to it" what a game must change
+- [ ] AGENTS.md, README.md, `docs/decisions.md` and the skills updated if any
+      is now wrong
+- [ ] work done by hand twice, or costly in tokens, made a script ("Scripts,
+      not tokens")
+- [ ] every problem found on the way, and not fixed, an issue ("A problem
+      found on the way")
+- [ ] the `review` skill read the change before it is pushed
+
+## The skills
+
+Each topic's own steps are a skill in `.claude/skills/<name>/SKILL.md`,
+found by its description; a rule in one binds as a rule here does.
+
+| Skill | Use it |
+| --- | --- |
+| [`review`](.claude/skills/review/SKILL.md) | before pushing: the change read against this file and the decisions |
+| [`release`](.claude/skills/release/SKILL.md) | to cut a release: the version, the CHANGELOG, the tag, the GitHub release |
+| [`quick-push`](.claude/skills/quick-push/SKILL.md) | to put a session's changes on the remote `main` |
+
+## Decisions
+
+**[`docs/decisions.md`](docs/decisions.md) records what was chosen, why and
+by whom; a decision binds as a rule here does.** Read it before work it
+touches. A choice it doesn't make - a new dependency, a departure from the
+spec, a second way to draw something, how a release is published - is the
+user's: ask, then record the answer there in the same change.
+
+## A problem found on the way
+
+**A cheap fix found on the way is made; anything bigger is an issue, never
+a detour and never left unsaid.** Something wrong that isn't what you were
+asked to do - a bug, a missing test, a part drawn off-spec, a doc that has
+drifted - is fixed if it takes a few lines and decides nothing unrecorded,
+in its own commit, named in the report. Otherwise search the issues on
+[TylerDM/bevy-material-ui](https://github.com/TylerDM/bevy-material-ui/issues)
+(a comment on the one already asking beats a second), then file it with
+`gh issue create`: what is wrong, where, how it was seen, and the fix if
+known. The report names each issue's link.
+
+## Scripts, not tokens
+
+**A task an agent repeats, or would spend many tokens doing by hand, is
+code**: a test where it checks, an example or a `testing` helper where it
+drives, as `--screenshots` saves every screenful of the play test rather
+than an agent opening the window and capturing it. Look for one before
+doing such a task by hand, and name a new one where agents look - here
+under "Commands", or in its skill.
+
+## Assets that aren't ours
+
+**A file from outside the repository records where it came from and its
+licence, beside it, before it is committed** - as
+`assets/fonts/Roboto-OFL.txt` does for Roboto - or it isn't used. Its licence
+must let a game ship it under MIT OR Apache-2.0 terms; README's "What is in
+the box" names any a game inherits.
 
 ## The design system is Material Design 3
 
@@ -105,6 +178,25 @@ needs a component drawn off-spec.
 - **No `unsafe`.** The crate forbids it.
 - **Search before you write**: a second copy of a helper is a refactor into
   the module both callers reach (`paint.rs`, `theme`, `testing.rs`).
+
+## Cross-platform rules
+
+README's "Cross-platform git" covers line endings, case on disk and
+executable bits. The rules for the code:
+
+- **Case matters.** `mod text_field;` finds `text_field.rs` and never
+  `Text_Field.rs` on Linux. Match a file's case exactly in every path -
+  `mod`, `include_bytes!`, asset paths - though Windows and macOS forgive it.
+- **Asset paths are Bevy's**: relative to `assets/`, with `/` on every
+  platform. Other paths are built with `Path`/`PathBuf`, never by joining
+  strings, and never relative to the current directory.
+- **A script that must run on all three platforms is Rust** - an example, a
+  test or `build.rs` - not `.sh` or `.ps1`. The git hook is the exception:
+  Git runs it with its own `sh` everywhere, and it is stored executable
+  (`git add --chmod=+x`).
+- **Platform-specific code goes behind `#[cfg(target_os = ...)]`**, every
+  arm written in the same change. `#[cfg(unix)]` is true on macOS too, so it
+  never means Linux. Needing one is a reason to look for the Bevy way first.
 
 ## Commands
 

@@ -149,11 +149,13 @@ The first line applies the per-clone git settings (line endings, the
 
 ```
 bevy-material-ui/
+├── .cargo/config.toml  links with rust-lld on Windows
 ├── .github/            CI on three platforms, the release workflow, Dependabot
 ├── .githooks/pre-push  fmt and clippy before a push
-├── .claude/skills/     the agents' skills: release, quick-push
+├── .claude/skills/     the agents' skills: review, release, quick-push
 ├── AGENTS.md           how the crate is put together and the rules that hold
 ├── CHANGELOG.md        what each release changed, and what a game must do
+├── docs/decisions.md   what was chosen, why, and whose choice it was
 ├── assets/fonts/       Roboto, and its licence
 ├── examples/playtest.rs  every component, live
 ├── src/
@@ -220,3 +222,36 @@ mismatch:
 ```bash
 git add --renormalize .
 ```
+
+### Case on disk
+
+Windows and macOS directories are case-insensitive by default; Linux's are
+not, so `Text_field.rs` and `text_field.rs` are two files there and one
+elsewhere. Git probes `core.ignorecase` per clone, so `.gitconfig`
+deliberately leaves it alone - forcing it causes phantom renames. Rename a
+file's case in two steps, or Git on Windows and macOS won't see it:
+
+```bash
+git mv src/Chip.rs src/chip-tmp.rs
+```
+
+```bash
+git mv src/chip-tmp.rs src/chip.rs
+```
+
+### Executable files
+
+NTFS has no executable bit, so Windows clones run with `core.filemode=false`
+and never set one. A file that must run on macOS and Linux - the `pre-push`
+hook, which Git there skips otherwise - is stored executable in the index:
+
+```bash
+git add --chmod=+x .githooks/pre-push
+```
+
+### Linking on Windows
+
+`.cargo/config.toml` links with `rust-lld`, which ships with rustup's
+toolchain, instead of MSVC's `link.exe`: several times faster for a Bevy
+binary, and every test file is one. It applies only to building this
+repository; a game links with its own settings.
