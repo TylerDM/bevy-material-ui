@@ -1,0 +1,15 @@
+# Clippy's settings. Each ban is a rule from AGENTS.md; code that truly needs
+# one says so where it is, with `#[expect(clippy::disallowed_..., reason = "...")]`.
+
+# Tests may panic and print freely.
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-print-in-tests = true
+allow-dbg-in-tests = true
+
+disallowed-methods = [
+    { path = "std::time::Instant::now", reason = "time is Bevy's `Time`, so tests run frames of a known length - AGENTS.md 'Testing'" },
+    { path = "std::time::SystemTime::now", reason = "time is Bevy's `Time`, so tests run frames of a known length - AGENTS.md 'Testing'" },
+    { path = "std::thread::spawn", reason = "a UI library spawns no threads of its own - AGENTS.md 'Writing code'" },
+    { path = "std::env::var", reason = "a library is handed its settings; only an example reads the environment - AGENTS.md 'Writing code'" },
+]

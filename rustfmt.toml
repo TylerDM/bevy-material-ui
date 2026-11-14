@@ -1,0 +1,3 @@
+# rustfmt's default newline_style is "Auto": it copies whatever the file already
+# uses, so a CRLF file stays CRLF. Pin it to LF to agree with .gitattributes.
+newline_style = "Unix"

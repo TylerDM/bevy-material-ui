@@ -1,0 +1,7 @@
+#!/bin/sh
+# Refuses a push that CI would refuse: formatting and clippy, warnings as
+# errors. The tests run in CI (.github/workflows/ci.yml); run them yourself
+# with `cargo test` before landing. Skip only when told to: --no-verify.
+set -e
+cargo fmt --all -- --check
+cargo clippy --all-targets --all-features -- -D warnings

@@ -1,0 +1,46 @@
+###############################################################################
+# Line endings
+#
+# The working tree is LF everywhere -- Windows, macOS and Linux alike. This
+# file is committed, so it applies to every clone regardless of each
+# developer's core.autocrlf. Settings here WIN over core.autocrlf and core.eol.
+###############################################################################
+* text=auto eol=lf
+
+# Windows batch interpreters mis-parse LF-only scripts.
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+###############################################################################
+# Explicit text types (content sniffing can misfire)
+###############################################################################
+*.rs            text eol=lf diff=rust
+*.toml          text eol=lf
+*.md            text eol=lf diff=markdown
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.json          text eol=lf
+*.sh            text eol=lf
+*.txt           text eol=lf
+*.wgsl          text eol=lf
+*.editorconfig  text eol=lf
+*.gitattributes text eol=lf
+*.gitignore     text eol=lf
+.githooks/*     text eol=lf
+LICENSE*        text eol=lf
+
+###############################################################################
+# Binary -- never normalize, never diff as text
+###############################################################################
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.ico           binary
+*.ttf           binary
+*.otf           binary
+*.ktx2          binary
+
+###############################################################################
+# Generated -- keep out of diffs and language stats
+###############################################################################
+Cargo.lock      text eol=lf -diff linguist-generated=true

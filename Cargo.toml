@@ -1,0 +1,109 @@
+[package]
+name = "bevy_material_ui"
+description = "Material Design 3 for Bevy's UI: a theme of colour roles, type and shape, and its components - papers, buttons, fields, chips, menus, dialogs, snackbars and more - drawn over bevy_ui and the headless bevy_ui_widgets."
+version = "0.1.0"
+edition = "2024"
+# Bevy 0.20's own minimum. Raise it with every Bevy upgrade that raises Bevy's.
+rust-version = "1.97.1"
+repository = "https://github.com/TylerDM/bevy-material-ui"
+readme = "README.md"
+keywords = ["bevy", "ui", "material", "widgets", "gamedev"]
+categories = ["game-development", "gui"]
+# Released as tagged GitHub releases and taken as a git dependency, never from
+# crates.io - see "Releasing" in README.md.
+publish = false
+exclude = [".github", ".githooks", ".claude", ".vscode"]
+
+[features]
+default = ["roboto"]
+# Material's typeface, Roboto (SIL OFL, `assets/fonts/Roboto-OFL.txt`), built
+# into the crate as the theme's default faces. An app with faces of its own
+# turns default features off and sets `MaterialTheme::fonts`.
+roboto = []
+
+[dependencies]
+# Bevy is pre-1.0: every minor version breaks, and an upgrade is a release of
+# its own. Each feature by name, for what the crate uses of it - never a
+# collection (`ui`, `2d`), which builds what a game may not want. Features are
+# additive across a build, so a game that asks for more gets more; this asks
+# for only what the components need. Rendering is the game's choice.
+bevy = { version = "0.20.1", default-features = false, features = [
+    "std",
+    "bevy_log",          # `warn!` where a component is misused.
+    "bevy_asset",        # Fonts and icons as assets.
+    "bevy_window",       # The window the popups stay inside.
+    "bevy_ui",           # Nodes, layout, text.
+    "bevy_ui_widgets",   # The headless behaviour every control is drawn over.
+    "bevy_input_focus",  # Keyboard focus, tab order and the focus ring.
+    "ui_picking",        # How the controls hear the pointer.
+] }
+
+[dev-dependencies]
+# The play test (examples/playtest.rs) opens a window and draws.
+bevy = { version = "0.20.1", default-features = false, features = [
+    "std",
+    "multi_threaded",
+    "async_executor",
+    "bevy_winit",
+    "bevy_ui_render",
+    "x11",
+    "wayland",
+] }
+
+[[example]]
+name = "playtest"
+doc-scrape-examples = true
+
+# Each lint holds a rule AGENTS.md states; CI turns every warning into an
+# error. Code that truly needs an exception says so where it is, with
+# `#[expect(lint, reason = "...")]`, which fails once it is no longer needed.
+[lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+missing_docs = "warn"
+unreachable_pub = "warn"
+
+[lints.rustdoc]
+broken_intra_doc_links = "deny"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+# Bevy systems take `Res`, `Query` and `Commands` by value.
+needless_pass_by_value = "allow"
+# A `#[must_use]` on every builder method says nothing.
+must_use_candidate = "allow"
+return_self_not_must_use = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+# Sizes become `f32` positions; truncation is the cast that matters, and is on.
+cast_precision_loss = "allow"
+# Colours and sizes are compared exactly in tests, on purpose.
+float_cmp = "allow"
+too_many_lines = "allow"
+# Colours are written as 0xRRGGBB, as every colour picker shows them.
+unreadable_literal = "allow"
+# Sizes and sides read as the words they are.
+similar_names = "allow"
+# A table of every colour role reads best with the roles' bare names.
+enum_glob_use = "allow"
+# Its fix, `assert_eq!(x, [] as [T; 0])`, reads worse than the assert.
+assert_is_empty = "allow"
+struct_excessive_bools = "allow"
+module_name_repetitions = "allow"
+allow_attributes_without_reason = "deny"
+dbg_macro = "deny"
+todo = "deny"
+unimplemented = "deny"
+print_stdout = "warn"
+print_stderr = "warn"
+unwrap_used = "warn"
+
+# Bevy is unusably slow unoptimised. Optimise our code a little, so it still
+# builds fast and debugs well, and every dependency fully.
+[profile.dev]
+opt-level = 1
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+opt-level = 3
+debug = false

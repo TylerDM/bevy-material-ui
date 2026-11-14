@@ -1,0 +1,38 @@
+# Per-clone Git configuration, shared through the repository.
+#
+# .gitattributes travels with the repo and fully controls line endings, but the
+# settings below live in .git/config, which is NOT cloned. .git/config includes
+# this file -- run once per clone, from any shell:
+#
+#   git config --local include.path ../.gitconfig
+#
+# After that, changes to this file reach every clone on the next pull.
+#
+# Deliberately NOT set here, because Git probes the right value per clone:
+#
+#   core.ignorecase  -- false on a case-sensitive directory, true otherwise.
+#   core.filemode    -- false on Windows, true on Linux and macOS.
+
+[core]
+	# Never rewrite line endings behind our back -- .gitattributes owns this.
+	autocrlf = false
+	eol = lf
+	# Cargo's target/ nests deep enough to pass the 260-char Windows MAX_PATH.
+	longpaths = true
+	symlinks = true
+	untrackedCache = true
+	# The project's hooks: `pre-push` runs fmt and clippy.
+	hooksPath = .githooks
+
+[diff]
+	algorithm = histogram
+
+[merge]
+	# Conflict markers include the common ancestor.
+	conflictstyle = zdiff3
+
+[fetch]
+	prune = true
+
+[push]
+	autoSetupRemote = true

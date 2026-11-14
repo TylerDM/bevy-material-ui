@@ -1,0 +1,5 @@
+# rustup reads this on every cargo command and installs what is missing, so a
+# fresh clone on any platform has what the build needs without a setup step.
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy", "llvm-tools"]
