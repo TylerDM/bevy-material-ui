@@ -26,9 +26,9 @@ pub struct Paper {
     pub gap: Val,
     /// Whether what is laid on it goes down (a column) or across (a row).
     pub direction: FlexDirection,
-    /// Its width; Val::Auto fits what is on it.
+    /// Its width; `Val::Auto` fits what is on it.
     pub width: Val,
-    /// Its height; Val::Auto fits what is on it.
+    /// Its height; `Val::Auto` fits what is on it.
     pub height: Val,
 }
 
