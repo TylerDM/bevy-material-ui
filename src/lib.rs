@@ -42,8 +42,17 @@ mod focus;
 mod icon;
 mod paint;
 mod paper;
+// Feedback, overlays and display.
+mod badge;
+mod dialog;
+mod progress;
+mod scroll;
+mod sheet;
+mod skeleton;
+mod snackbar;
 pub mod testing;
 pub mod theme;
+mod tooltip;
 
 use bevy::input_focus::tab_navigation::TabNavigationPlugin;
 use bevy::input_focus::{InputDispatchPlugin, InputFocusPlugin};
@@ -62,6 +71,35 @@ pub use crate::paint::{
     text,
 };
 pub use crate::paper::{CardKind, Paper, card, divider, paper};
+// Feedback, overlays and display.
+pub use crate::badge::{
+    AVATAR, Avatar, AvatarFace, BADGE_MAX, Badge, BadgeLabel, LARGE_BADGE, SMALL_BADGE, avatar,
+    badge, badge_label, initials,
+};
+pub use crate::dialog::{
+    CANCEL, CONFIRM, DialogAction, DialogActionKey, DialogAnswer, DialogResult, DialogScrim,
+    DialogSurface, MaterialDialog, SCRIM_OPACITY, confirm_dialog, dialog,
+};
+pub use crate::progress::{
+    CIRCULAR_SIDE, CIRCULAR_STROKE, CircularProgress, LINEAR_THICKNESS, LinearProgress, Progress,
+    ProgressClock, ProgressIndicator, SWEEP_SECONDS, arc_gradient, circular_arc, circular_progress,
+    linear_progress, linear_span,
+};
+pub use crate::scroll::{
+    MaterialScrollThumb, MaterialScrollbar, SCROLLBAR_GUTTER, ScrollViewport, THUMB_REST_OPACITY,
+    overflows, scroll_area,
+};
+pub use crate::sheet::{
+    SHEET_MAX_WIDTH, SheetClosed, SheetHandle, SheetScrim, SheetSurface, bottom_sheet,
+};
+pub use crate::skeleton::{PULSE_SECONDS, Skeleton, pulse, skeleton};
+pub use crate::snackbar::{
+    SNACKBAR_ACTION_SECONDS, SNACKBAR_SECONDS, Snackbar, SnackbarAction, SnackbarActionButton,
+    SnackbarCloseButton, SnackbarCloseReason, SnackbarClosed, SnackbarId, SnackbarView, Snackbars,
+};
+pub use crate::tooltip::{
+    TOOLTIP_DELAY, Tooltip, TooltipAction, TooltipKind, TooltipState, TooltipView,
+};
 
 /// Everything a game needs to draw a Material interface.
 pub mod prelude {
@@ -111,6 +149,15 @@ impl Plugin for MaterialUiPlugin {
                     .chain()
                     .before(UiSystems::Prepare),
             );
+        // Feedback, overlays and display.
+        badge::plugin(app);
+        dialog::plugin(app);
+        progress::plugin(app);
+        scroll::plugin(app);
+        sheet::plugin(app);
+        skeleton::plugin(app);
+        snackbar::plugin(app);
+        tooltip::plugin(app);
         #[cfg(feature = "roboto")]
         app.add_systems(PreStartup, theme::add_roboto);
     }
