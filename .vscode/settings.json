@@ -1,0 +1,21 @@
+{
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": true,
+
+  "[rust]": { "editor.defaultFormatter": "rust-lang.rust-analyzer" },
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.cargo.features": "all",
+
+  "search.exclude": {
+    "**/target": true,
+    "**/target-*": true,
+    "**/Cargo.lock": true
+  },
+
+  "files.watcherExclude": {
+    "**/target/**": true,
+    "**/target-*/**": true
+  }
+}

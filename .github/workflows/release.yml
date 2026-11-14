@@ -1,0 +1,123 @@
+name: Release
+
+# Releases the crate when a version is tagged:
+#
+#   git tag v0.2.0 && git push origin v0.2.0
+#
+# A release is the tag, checked and announced. The crate is not published to
+# crates.io (`publish = false` in Cargo.toml): a game takes it as a git
+# dependency pinned to the tag -
+#
+#   bevy_material_ui = { git = "https://github.com/TylerDM/bevy-material-ui", tag = "v0.2.0" }
+#
+# - and this workflow makes sure that tag is one worth pinning: the version in
+# Cargo.toml is the tag's, CHANGELOG.md says what changed, and every check CI
+# runs passes on the tagged commit before the GitHub release is created. The
+# release carries the CHANGELOG's section for the version as its notes and the
+# packaged source (.crate) as an asset.
+#
+# A version is released once. Fix forward with the next version rather than
+# moving a tag a game may already pin.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+
+jobs:
+  # v0.2.0 -> 0.2.0, refused unless Cargo.toml and CHANGELOG.md agree.
+  version:
+    name: Check the version
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read the version from the tag
+        id: version
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' is not v<major>.<minor>.<patch>."
+            exit 1
+          fi
+          CRATE=$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -n 1)
+          if [ "$CRATE" != "$VERSION" ]; then
+            echo "::error::Cargo.toml says $CRATE; the tag says $VERSION. Bump Cargo.toml in the tagged commit."
+            exit 1
+          fi
+          if ! grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no '## [$VERSION]' section."
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+  # The same checks as CI: a tag can be pushed on any commit, green or not.
+  checks:
+    name: Checks
+    needs: version
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    name: Publish the GitHub release
+    needs: [version, checks]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Rust
+        run: rustup show
+
+      - name: Install Linux libraries
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libwayland-dev libxkbcommon-dev
+
+      # The source as cargo packages it: what a game builds from the tag.
+      - name: Package
+        run: cargo package --allow-dirty --no-verify
+
+      - name: Write the notes
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          # The CHANGELOG's section for this version, up to the next heading.
+          awk -v version="$VERSION" '
+            $0 ~ "^## \\[" version "\\]" { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          {
+            echo
+            echo "## Using it"
+            echo
+            echo '```toml'
+            echo "bevy_material_ui = { git = \"https://github.com/${GITHUB_REPOSITORY}\", tag = \"${GITHUB_REF_NAME}\" }"
+            echo '```'
+          } >> notes.md
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          PRERELEASE=""
+          if [[ "$VERSION" == *-* ]]; then PRERELEASE="--prerelease"; fi
+          gh release create "$GITHUB_REF_NAME" \
+            --verify-tag \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file notes.md \
+            $PRERELEASE \
+            target/package/bevy_material_ui-"$VERSION".crate
