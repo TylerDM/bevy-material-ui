@@ -37,32 +37,42 @@
 //! ([`bevy::ui_widgets::Activate`], [`bevy::ui_widgets::ValueChange`]) and
 //! keeps the state. Nothing here knows what it changes.
 
-mod button;
-mod chip;
+// The core: painting from the theme, focus, icons.
 mod focus;
-pub mod gallery;
 mod icon;
 mod paint;
+pub mod testing;
+pub mod theme;
+// Surfaces and buttons.
+mod button;
 mod paper;
+mod segmented;
+// Selection controls.
+mod checkbox;
+mod radio;
+mod slider;
+mod switch;
+// Text, search and chips.
+mod chip;
+mod search;
+mod text_field;
+// Navigation, lists and menus.
+mod app_bar;
+mod list;
+mod menu;
+mod navigation;
+mod tabs;
 // Feedback, overlays and display.
 mod badge;
 mod dialog;
 mod progress;
 mod scroll;
-mod search;
 mod sheet;
 mod skeleton;
 mod snackbar;
-pub mod testing;
-mod text_field;
-pub mod theme;
 mod tooltip;
-// Selection controls.
-mod checkbox;
-mod radio;
-mod segmented;
-mod slider;
-mod switch;
+// The play test.
+pub mod gallery;
 
 use bevy::input_focus::tab_navigation::TabNavigationPlugin;
 use bevy::input_focus::{InputDispatchPlugin, InputFocusPlugin};
@@ -70,20 +80,74 @@ use bevy::prelude::*;
 use bevy::ui::UiSystems;
 use bevy::ui_widgets::UiWidgetsPlugins;
 
-pub use crate::button::{
-    BUTTON_HEIGHT, ButtonVariant, Fab, FabSize, ICON_BUTTON, IconButtonVariant, MaterialButton,
-    button, fab, icon_button,
-};
-pub use crate::chip::{
-    CHIP_HEIGHT, ChipKind, ChipRemoved, MaterialChip, chip, chip_border, chip_look, chip_set,
-};
+// The core.
 pub use crate::focus::FocusRing;
 pub use crate::icon::{Glyph, ICON, Icon, IconRoot, icon};
 pub use crate::paint::{
     Content, ContentColor, Fill, Ink, Look, Paint, Raised, Stroke, Typeset, label, set_enabled,
     text,
 };
+// Surfaces and buttons.
+pub use crate::button::{
+    BUTTON_HEIGHT, ButtonVariant, Fab, FabSize, ICON_BUTTON, IconButtonVariant, MaterialButton,
+    button, fab, icon_button,
+};
 pub use crate::paper::{CardKind, Paper, card, divider, paper};
+pub use crate::segmented::{
+    MaterialSegmentedButtons, SEGMENT_HEIGHT, Segment, SegmentCheck, SegmentStyle,
+    SegmentedButtons, chosen_after, segment_look, segmented_buttons,
+};
+// Selection controls.
+pub use crate::checkbox::{
+    BOX, CheckboxBox, CheckboxMark, CheckboxPaints, CheckboxStyle, LabelRow, MaterialCheckbox,
+    SelfUpdating, TARGET, checkbox, checkbox_paints,
+};
+pub use crate::radio::{
+    DOT, MaterialRadio, MaterialRadioGroup, RING, RadioDot, RadioOption, RadioRing, RadioStyle,
+    radio, radio_group, radio_paints,
+};
+pub use crate::slider::{
+    HANDLE, MaterialSlider, MaterialSliderStyle, NotchLabel, Notches, SLIDER_HEIGHT, SLIDER_TRACK,
+    SliderFill, SliderHalo, SliderStop, SliderTrack, notch_at, notched_slider, on_a_step,
+    set_notch, slider,
+};
+pub use crate::switch::{
+    MaterialSwitch, SWITCH_TRACK, SwitchHalo, SwitchHandle, SwitchPaints, SwitchState, SwitchStyle,
+    halo_left, handle_side, switch, switch_paints,
+};
+// Text, search and chips.
+pub use crate::chip::{
+    CHIP_HEIGHT, ChipKind, ChipRemoved, MaterialChip, chip, chip_border, chip_look, chip_set,
+};
+pub use crate::search::{
+    SEARCH_HEIGHT, SearchBar, SearchNavigate, SearchResult, search_bar, search_result,
+    search_results,
+};
+pub use crate::text_field::{
+    FIELD_HEIGHT, InputText, MaterialTextField, TextField, TextFieldVariant, counter_text,
+    set_input_text, text_field,
+};
+// Navigation, lists and menus.
+pub use crate::app_bar::{
+    AppBar, AppBarAction, AppBarButton, AppBarKind, AppBarTitle, TopAppBar, top_app_bar,
+};
+pub use crate::list::{
+    Leading, Lines, ListRow, MaterialList, MaterialListItem, Trailing, TrailingSlot, list,
+    list_item, list_unmanaged, row_look,
+};
+pub use crate::menu::{
+    MaterialMenu, MaterialMenuRoot, MaterialSelect, MenuChoice, MenuEntry, MenuLine, MenuOpener,
+    MenuSurface, MenuTrigger, SelectField, SelectValue, item_look, menu, menu_item, select,
+};
+pub use crate::navigation::{
+    ActiveIndicator, Destination, Navigation, NavigationDestination, NavigationDrawer,
+    NavigationKind, NavigationSelection, RailFab, RailFabActivated, destination, indicator_look,
+    label_role, navigation_bar, navigation_drawer, navigation_rail,
+};
+pub use crate::tabs::{
+    MaterialTab, MaterialTabHeader, MaterialTabs, MaterialTabsRow, TabIndicator, TabPanel,
+    TabPanels, TabsKind, tab, tab_panel, tab_panels, tabs,
+};
 // Feedback, overlays and display.
 pub use crate::badge::{
     AVATAR, Avatar, AvatarFace, BADGE_MAX, Badge, BadgeLabel, LARGE_BADGE, SMALL_BADGE, avatar,
@@ -113,36 +177,6 @@ pub use crate::snackbar::{
 pub use crate::tooltip::{
     TOOLTIP_DELAY, Tooltip, TooltipAction, TooltipKind, TooltipState, TooltipView,
 };
-// Selection controls.
-pub use crate::checkbox::{
-    BOX, CheckboxBox, CheckboxMark, CheckboxPaints, CheckboxStyle, LabelRow, MaterialCheckbox,
-    SelfUpdating, TARGET, checkbox, checkbox_paints,
-};
-pub use crate::radio::{
-    DOT, MaterialRadio, MaterialRadioGroup, RING, RadioDot, RadioOption, RadioRing, RadioStyle,
-    radio, radio_group, radio_paints,
-};
-pub use crate::search::{
-    SEARCH_HEIGHT, SearchBar, SearchNavigate, SearchResult, search_bar, search_result,
-    search_results,
-};
-pub use crate::segmented::{
-    MaterialSegmentedButtons, SEGMENT_HEIGHT, Segment, SegmentCheck, SegmentStyle,
-    SegmentedButtons, chosen_after, segment_look, segmented_buttons,
-};
-pub use crate::slider::{
-    HANDLE, MaterialSlider, MaterialSliderStyle, NotchLabel, Notches, SLIDER_HEIGHT, SLIDER_TRACK,
-    SliderFill, SliderHalo, SliderStop, SliderTrack, notch_at, notched_slider, on_a_step,
-    set_notch, slider,
-};
-pub use crate::switch::{
-    MaterialSwitch, SWITCH_TRACK, SwitchHalo, SwitchHandle, SwitchPaints, SwitchState, SwitchStyle,
-    halo_left, handle_side, switch, switch_paints,
-};
-pub use crate::text_field::{
-    FIELD_HEIGHT, InputText, MaterialTextField, TextField, TextFieldVariant, counter_text,
-    set_input_text, text_field,
-};
 
 /// Everything a game needs to draw a Material interface.
 pub mod prelude {
@@ -154,6 +188,12 @@ pub mod prelude {
     };
     pub use crate::*;
 }
+
+/// The systems that paint every part from the theme, in `PostUpdate`: a
+/// component's own systems that change a [`Look`] or a [`ContentColor`] run
+/// before them, so the change is drawn the same frame.
+#[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct PaintSystems;
 
 /// Draws Material's components: the theme, the painting of every part from
 /// it, the controls' states and the focus ring. Adds Bevy's headless widgets
@@ -190,9 +230,22 @@ impl Plugin for MaterialUiPlugin {
                     focus::draw_focus_rings,
                 )
                     .chain()
-                    .before(UiSystems::Prepare),
-            );
-        // Feedback, overlays and display.
+                    .in_set(PaintSystems),
+            )
+            .configure_sets(PostUpdate, PaintSystems.before(UiSystems::Prepare));
+        segmented::plugin(app);
+        checkbox::plugin(app);
+        radio::plugin(app);
+        slider::plugin(app);
+        switch::plugin(app);
+        chip::plugin(app);
+        search::plugin(app);
+        text_field::plugin(app);
+        app_bar::plugin(app);
+        list::plugin(app);
+        menu::plugin(app);
+        navigation::plugin(app);
+        tabs::plugin(app);
         badge::plugin(app);
         dialog::plugin(app);
         progress::plugin(app);
@@ -201,15 +254,6 @@ impl Plugin for MaterialUiPlugin {
         skeleton::plugin(app);
         snackbar::plugin(app);
         tooltip::plugin(app);
-        // Selection controls.
-        checkbox::plugin(app);
-        radio::plugin(app);
-        segmented::plugin(app);
-        slider::plugin(app);
-        switch::plugin(app);
-        text_field::plugin(app);
-        search::plugin(app);
-        chip::plugin(app);
         #[cfg(feature = "roboto")]
         app.add_systems(PreStartup, theme::add_roboto);
     }
