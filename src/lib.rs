@@ -44,6 +44,12 @@ mod paint;
 mod paper;
 pub mod testing;
 pub mod theme;
+// Selection controls.
+mod checkbox;
+mod radio;
+mod segmented;
+mod slider;
+mod switch;
 
 use bevy::input_focus::tab_navigation::TabNavigationPlugin;
 use bevy::input_focus::{InputDispatchPlugin, InputFocusPlugin};
@@ -62,6 +68,28 @@ pub use crate::paint::{
     text,
 };
 pub use crate::paper::{CardKind, Paper, card, divider, paper};
+// Selection controls.
+pub use crate::checkbox::{
+    BOX, CheckboxBox, CheckboxMark, CheckboxPaints, CheckboxStyle, LabelRow, MaterialCheckbox,
+    SelfUpdating, TARGET, checkbox, checkbox_paints,
+};
+pub use crate::radio::{
+    DOT, MaterialRadio, MaterialRadioGroup, RING, RadioDot, RadioOption, RadioRing, RadioStyle,
+    radio, radio_group, radio_paints,
+};
+pub use crate::segmented::{
+    MaterialSegmentedButtons, SEGMENT_HEIGHT, Segment, SegmentCheck, SegmentStyle,
+    SegmentedButtons, chosen_after, segment_look, segmented_buttons,
+};
+pub use crate::slider::{
+    HANDLE, MaterialSlider, MaterialSliderStyle, NotchLabel, Notches, SLIDER_HEIGHT, SLIDER_TRACK,
+    SliderFill, SliderHalo, SliderStop, SliderTrack, notch_at, notched_slider, on_a_step,
+    set_notch, slider,
+};
+pub use crate::switch::{
+    MaterialSwitch, SWITCH_TRACK, SwitchHalo, SwitchHandle, SwitchPaints, SwitchState, SwitchStyle,
+    halo_left, handle_side, switch, switch_paints,
+};
 
 /// Everything a game needs to draw a Material interface.
 pub mod prelude {
@@ -111,6 +139,12 @@ impl Plugin for MaterialUiPlugin {
                     .chain()
                     .before(UiSystems::Prepare),
             );
+        // Selection controls.
+        checkbox::plugin(app);
+        radio::plugin(app);
+        segmented::plugin(app);
+        slider::plugin(app);
+        switch::plugin(app);
         #[cfg(feature = "roboto")]
         app.add_systems(PreStartup, theme::add_roboto);
     }

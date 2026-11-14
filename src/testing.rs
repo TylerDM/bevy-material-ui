@@ -192,11 +192,8 @@ fn pointer(app: &mut App, at: Vec2, action: PointerAction) {
         ),
         position: at,
     };
-    app.world_mut().write_message(PointerInput::new(
-        PointerId::Mouse,
-        location,
-        action,
-    ));
+    app.world_mut()
+        .write_message(PointerInput::new(PointerId::Mouse, location, action));
 }
 
 /// The centre of a node, in logical pixels.
@@ -323,4 +320,24 @@ fn propagate_visibility(
             stack.extend(kids.iter().map(|kid| (kid, visible)));
         }
     }
+}
+/// Drags with the mouse from `from` to `to`, in logical pixels: pressed,
+/// moved there in a few steps, and released, a frame apart.
+pub fn drag(app: &mut App, from: Vec2, to: Vec2) {
+    use bevy::picking::pointer::PointerButton;
+    const STEPS: u8 = 5;
+    pointer(app, from, PointerAction::Move { delta: Vec2::ZERO });
+    app.update();
+    pointer(app, from, PointerAction::Press(PointerButton::Primary));
+    app.update();
+    let mut at = from;
+    for step in 1..=STEPS {
+        let next = from.lerp(to, f32::from(step) / f32::from(STEPS));
+        pointer(app, next, PointerAction::Move { delta: next - at });
+        at = next;
+        app.update();
+    }
+    pointer(app, to, PointerAction::Release(PointerButton::Primary));
+    app.update();
+    app.update();
 }
