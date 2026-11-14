@@ -38,6 +38,7 @@
 //! keeps the state. Nothing here knows what it changes.
 
 mod button;
+mod chip;
 mod focus;
 pub mod gallery;
 mod icon;
@@ -48,10 +49,12 @@ mod badge;
 mod dialog;
 mod progress;
 mod scroll;
+mod search;
 mod sheet;
 mod skeleton;
 mod snackbar;
 pub mod testing;
+mod text_field;
 pub mod theme;
 mod tooltip;
 // Selection controls.
@@ -70,6 +73,9 @@ use bevy::ui_widgets::UiWidgetsPlugins;
 pub use crate::button::{
     BUTTON_HEIGHT, ButtonVariant, Fab, FabSize, ICON_BUTTON, IconButtonVariant, MaterialButton,
     button, fab, icon_button,
+};
+pub use crate::chip::{
+    CHIP_HEIGHT, ChipKind, ChipRemoved, MaterialChip, chip, chip_border, chip_look, chip_set,
 };
 pub use crate::focus::FocusRing;
 pub use crate::icon::{Glyph, ICON, Icon, IconRoot, icon};
@@ -116,6 +122,10 @@ pub use crate::radio::{
     DOT, MaterialRadio, MaterialRadioGroup, RING, RadioDot, RadioOption, RadioRing, RadioStyle,
     radio, radio_group, radio_paints,
 };
+pub use crate::search::{
+    SEARCH_HEIGHT, SearchBar, SearchNavigate, SearchResult, search_bar, search_result,
+    search_results,
+};
 pub use crate::segmented::{
     MaterialSegmentedButtons, SEGMENT_HEIGHT, Segment, SegmentCheck, SegmentStyle,
     SegmentedButtons, chosen_after, segment_look, segmented_buttons,
@@ -128,6 +138,10 @@ pub use crate::slider::{
 pub use crate::switch::{
     MaterialSwitch, SWITCH_TRACK, SwitchHalo, SwitchHandle, SwitchPaints, SwitchState, SwitchStyle,
     halo_left, handle_side, switch, switch_paints,
+};
+pub use crate::text_field::{
+    FIELD_HEIGHT, InputText, MaterialTextField, TextField, TextFieldVariant, counter_text,
+    set_input_text, text_field,
 };
 
 /// Everything a game needs to draw a Material interface.
@@ -193,6 +207,9 @@ impl Plugin for MaterialUiPlugin {
         segmented::plugin(app);
         slider::plugin(app);
         switch::plugin(app);
+        text_field::plugin(app);
+        search::plugin(app);
+        chip::plugin(app);
         #[cfg(feature = "roboto")]
         app.add_systems(PreStartup, theme::add_roboto);
     }

@@ -353,3 +353,28 @@ pub fn drag(app: &mut App, from: Vec2, to: Vec2) {
     app.update();
     app.update();
 }
+
+/// Types `words` into whatever holds the keyboard's focus, a key at a time,
+/// and runs frames until the edits are applied.
+pub fn type_text(app: &mut App, words: &str) {
+    let window = window_of(app);
+    for character in words.chars() {
+        let key = if character == ' ' {
+            Key::Space
+        } else {
+            Key::Character(character.to_string().into())
+        };
+        for state in [ButtonState::Pressed, ButtonState::Released] {
+            app.world_mut().write_message(KeyboardInput {
+                key_code: KeyCode::Unidentified(bevy::input::keyboard::NativeKeyCode::Unidentified),
+                logical_key: key.clone(),
+                state,
+                text: (state == ButtonState::Pressed).then(|| character.to_string().into()),
+                repeat: false,
+                window,
+            });
+            app.update();
+        }
+    }
+    app.update();
+}
