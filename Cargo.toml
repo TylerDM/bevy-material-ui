@@ -5,6 +5,7 @@ version = "0.1.0"
 edition = "2024"
 # Bevy 0.20's own minimum. Raise it with every Bevy upgrade that raises Bevy's.
 rust-version = "1.97.1"
+license = "MIT OR Apache-2.0"
 repository = "https://github.com/TylerDM/bevy-material-ui"
 readme = "README.md"
 keywords = ["bevy", "ui", "material", "widgets", "gamedev"]

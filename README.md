@@ -189,6 +189,12 @@ notes and the packaged crate attached. A game moves to it by changing its
 - **A version is released once.** Never move a tag a game may pin; fix
   forward with the next version.
 
+## Licence
+
+Dual-licensed under either of [MIT](LICENSE-MIT) or [Apache 2.0](LICENSE-APACHE), at your
+option - as Bevy is. Roboto, built in by the `roboto` feature, is under the SIL
+Open Font License ([`assets/fonts/Roboto-OFL.txt`](assets/fonts/Roboto-OFL.txt)).
+
 ## Cross-platform git
 
 A file has the same bytes on Windows, macOS and Linux. **`.gitattributes`**
