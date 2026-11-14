@@ -4,7 +4,7 @@
 //! A [`list`] is Bevy's headless [`ListBox`]: a click on a row selects it, and
 //! while the list has the keyboard's focus the arrow keys, Home and End move
 //! between its rows and Enter or Space selects one. It sends
-//! [`ValueChange<Entity>`] - the row chosen - on the list, and by default
+//! [`ValueChange<Entity>`](bevy::ui_widgets::ValueChange) - the row chosen - on the list, and by default
 //! keeps its own selection; the selected row is drawn in
 //! [`ColorRole::SecondaryContainer`].
 
@@ -91,13 +91,13 @@ pub struct MaterialList;
 
 /// A list of rows: spawn [`list_item`]s inside it, and [`crate::divider`]s
 /// between groups. It keeps its own selection; a game that keeps it instead
-/// observes [`ValueChange<Entity>`] and inserts or removes `Selected` on rows
+/// observes [`ValueChange<Entity>`](bevy::ui_widgets::ValueChange) and inserts or removes `Selected` on rows
 /// itself, spawning the list with [`list_unmanaged`].
 pub fn list() -> impl Bundle {
     (list_unmanaged(), observe(listbox_update_selection))
 }
 
-/// A list whose selection the game keeps: it sends [`ValueChange<Entity>`]
+/// A list whose selection the game keeps: it sends [`ValueChange<Entity>`](bevy::ui_widgets::ValueChange)
 /// and changes nothing itself.
 pub fn list_unmanaged() -> impl Bundle {
     (
