@@ -192,11 +192,8 @@ fn pointer(app: &mut App, at: Vec2, action: PointerAction) {
         ),
         position: at,
     };
-    app.world_mut().write_message(PointerInput::new(
-        PointerId::Mouse,
-        location,
-        action,
-    ));
+    app.world_mut()
+        .write_message(PointerInput::new(PointerId::Mouse, location, action));
 }
 
 /// The centre of a node, in logical pixels.
@@ -323,4 +320,28 @@ fn propagate_visibility(
             stack.extend(kids.iter().map(|kid| (kid, visible)));
         }
     }
+}
+/// Types `words` into whatever holds the keyboard's focus, a key at a time,
+/// and runs frames until the edits are applied.
+pub fn type_text(app: &mut App, words: &str) {
+    let window = window_of(app);
+    for character in words.chars() {
+        let key = if character == ' ' {
+            Key::Space
+        } else {
+            Key::Character(character.to_string().into())
+        };
+        for state in [ButtonState::Pressed, ButtonState::Released] {
+            app.world_mut().write_message(KeyboardInput {
+                key_code: KeyCode::Unidentified(bevy::input::keyboard::NativeKeyCode::Unidentified),
+                logical_key: key.clone(),
+                state,
+                text: (state == ButtonState::Pressed).then(|| character.to_string().into()),
+                repeat: false,
+                window,
+            });
+            app.update();
+        }
+    }
+    app.update();
 }
