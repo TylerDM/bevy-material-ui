@@ -22,12 +22,12 @@ The first release, on Bevy 0.20.1.
   and segmented buttons; checkboxes, radio groups, switches and sliders;
   text fields, search bars and chips; lists, tabs, app bars, navigation
   bars, rails and drawers, menus and select fields; dialogs, bottom sheets,
-  snackbars, tooltips, progress indicators, badges, avatars and scroll
-  areas; icons drawn from strokes.
+  snackbars, tooltips, progress indicators, badges, avatars, loading
+  skeletons and scroll areas; icons drawn from strokes.
 - **Testing**: `bevy_material_ui::testing`, a headless Bevy UI with a
   pointer, a keyboard and time, for a game's tests too.
-- **The play test**: `cargo run --example playtest`, and its headless twin
-  in the test suite.
+- **The play test**: `cargo run --example playtest` (`--screenshots` saves
+  every screenful), and its headless twin in the test suite.
 
 ### Moving to it
 

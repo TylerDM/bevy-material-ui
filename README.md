@@ -109,6 +109,14 @@ snackbars, and switch light and dark (`D`) or the seed colour (`S`) to see
 the whole interface repaint. Bevy builds slowly the first time (a few
 minutes); after that it starts in seconds.
 
+To check its look without sitting at it, `--screenshots` scrolls the whole
+gallery, saves each screenful - and an open dialog, sheet and snackbar - as
+PNGs in a folder, and exits (add `--dark` for the dark theme):
+
+```bash
+cargo run --example playtest -- --screenshots target/screenshots
+```
+
 The same play test runs headless in the test suite (`tests/playtest.rs`):
 it builds the whole screen and drives it as a player would - every control
 clicked, typed into or keyed, every overlay opened and closed - and checks
