@@ -1,7 +1,7 @@
 [package]
 name = "bevy_material_ui"
 description = "Material Design 3 for Bevy's UI: a theme of colour roles, type and shape, and its components - papers, buttons, fields, chips, menus, dialogs, snackbars and more - drawn over bevy_ui and the headless bevy_ui_widgets."
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 # Bevy 0.20's own minimum. Raise it with every Bevy upgrade that raises Bevy's.
 rust-version = "1.97.1"

@@ -8,11 +8,16 @@ The versions are [Semantic Versioning](https://semver.org)'s, read the Cargo
 way while the crate is 0.x: a change a game must make is a minor, anything
 else a patch.
 
-## [Unreleased]
+## [0.1.1]
+
+A fix for games that change screens, and the Guild Clerk, on Bevy 0.20.1.
 
 - **Fixed**: a game that despawns its screen in its own systems - to move
   to another screen, say - no longer risks a panic from the crate's systems
   commanding a part that is gone (a skeleton's pulse did it every frame).
+- **Testing**: `testing::scroll_into_view`, and so `click` and `hover`,
+  scroll a part into view through every scroll area it is in, not only the
+  nearest - a part in a scroll area inside another was left out of view.
 - **The Guild Clerk**: `cargo run --example guild`, a short game of forms
   that uses every component where a game would, and shows how a game keeps
   its state and reads the controls' events.
