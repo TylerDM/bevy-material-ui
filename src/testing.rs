@@ -48,7 +48,11 @@ pub fn headless_app(width: u32, height: u32, scale: f32) -> App {
         crate::MaterialUiPlugin,
     ))
     // Picking skips a node that isn't visible, which this works out.
-    .add_systems(PostUpdate, propagate_visibility)
+    .add_systems(
+        PostUpdate,
+        propagate_visibility
+            .in_set(bevy::camera::visibility::VisibilitySystems::VisibilityPropagate),
+    )
     .insert_resource(bevy::time::TimeUpdateStrategy::ManualDuration(
         std::time::Duration::from_secs_f64(1.0 / 60.0),
     ));
@@ -192,11 +196,8 @@ fn pointer(app: &mut App, at: Vec2, action: PointerAction) {
         ),
         position: at,
     };
-    app.world_mut().write_message(PointerInput::new(
-        PointerId::Mouse,
-        location,
-        action,
-    ));
+    app.world_mut()
+        .write_message(PointerInput::new(PointerId::Mouse, location, action));
 }
 
 /// The centre of a node, in logical pixels.

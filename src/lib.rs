@@ -37,6 +37,12 @@
 //! ([`bevy::ui_widgets::Activate`], [`bevy::ui_widgets::ValueChange`]) and
 //! keeps the state. Nothing here knows what it changes.
 
+mod app_bar;
+mod list;
+mod menu;
+mod navigation;
+mod tabs;
+
 mod button;
 mod focus;
 mod icon;
@@ -63,6 +69,27 @@ pub use crate::paint::{
 };
 pub use crate::paper::{CardKind, Paper, card, divider, paper};
 
+pub use crate::app_bar::{
+    AppBar, AppBarAction, AppBarButton, AppBarKind, AppBarTitle, TopAppBar, top_app_bar,
+};
+pub use crate::list::{
+    Leading, Lines, ListRow, MaterialList, MaterialListItem, Trailing, TrailingSlot, avatar, list,
+    list_item, list_unmanaged, row_look,
+};
+pub use crate::menu::{
+    MaterialMenu, MaterialMenuRoot, MaterialSelect, MenuChoice, MenuEntry, MenuLine, MenuOpener,
+    MenuSurface, MenuTrigger, SelectField, SelectValue, item_look, menu, menu_item, select,
+};
+pub use crate::navigation::{
+    ActiveIndicator, Destination, Navigation, NavigationDestination, NavigationDrawer,
+    NavigationKind, NavigationSelection, RailFab, RailFabActivated, destination, indicator_look,
+    label_role, navigation_bar, navigation_drawer, navigation_rail,
+};
+pub use crate::tabs::{
+    MaterialTab, MaterialTabHeader, MaterialTabs, MaterialTabsRow, TabIndicator, TabPanel,
+    TabPanels, TabsKind, tab, tab_panel, tab_panels, tabs,
+};
+
 /// Everything a game needs to draw a Material interface.
 pub mod prelude {
     pub use bevy::ui_widgets::{Activate, ValueChange};
@@ -73,6 +100,12 @@ pub mod prelude {
     };
     pub use crate::*;
 }
+
+/// The systems that paint every part from the theme, in `PostUpdate`: a
+/// component's own systems that change a [`Look`] or a [`ContentColor`] run
+/// before them, so the change is drawn the same frame.
+#[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct PaintSystems;
 
 /// Draws Material's components: the theme, the painting of every part from
 /// it, the controls' states and the focus ring. Adds Bevy's headless widgets
@@ -109,8 +142,15 @@ impl Plugin for MaterialUiPlugin {
                     focus::draw_focus_rings,
                 )
                     .chain()
-                    .before(UiSystems::Prepare),
-            );
+                    .in_set(PaintSystems),
+            )
+            .configure_sets(PostUpdate, PaintSystems.before(UiSystems::Prepare));
+        app_bar::plugin(app);
+        list::plugin(app);
+        menu::plugin(app);
+        navigation::plugin(app);
+        tabs::plugin(app);
+
         #[cfg(feature = "roboto")]
         app.add_systems(PreStartup, theme::add_roboto);
     }
